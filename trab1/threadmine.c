@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include <math.h>
 #include "../timer.h"
+#include "sha256.h"
 
 // ----------- utils ----------
 // ----------------------------
@@ -26,6 +27,8 @@ typedef struct {
 
 void* thread_function(void* args_pointer){
     thread_args* args = (thread_args*) args_pointer;
+
+    //while(){}
 
     free(args_pointer);
     pthread_exit(NULL);
@@ -58,7 +61,7 @@ int main(int argc, char** argv){
         return 1;
     }
 
-    const long long difficulty = strtol( argv[1], NULL, 10 ); // quantidade de zeros necessarios
+    const int difficulty = strtol( argv[1], NULL, 10 ); // quantidade de zeros necessarios
     if(difficulty < 0){
         printf("A <dificuldade> deve ser maior ou igual a 0.\n");
         return 1;
