@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define ROT(x, n) ((x >> n) | (x << (32u - n)))
+#define ROT(x, n) (((x) >> n) | ((x) << (32u - n)))
 
 const char *bit_rep[16] = {
     [ 0] = "0000", [ 1] = "0001", [ 2] = "0010", [ 3] = "0011",
@@ -31,10 +31,9 @@ void sha256(u_int8_t *ptr, u_int64_t size, u_int8_t *ret) {
 
 	buf[size] = 0x80;
 	size = (512 * chunks - 64) / 8;
-	printf("%u\n", size);
 
 	u_int64_t *input_size_ptr = (u_int64_t *) (buf + size);
-	*input_size_ptr = input_size;
+	*input_size_ptr = input_size * 8;
 
 	for (u_int32_t i = 0; i < 4; i++) {
 		u_int8_t tmp = buf[size + i];
@@ -42,10 +41,6 @@ void sha256(u_int8_t *ptr, u_int64_t size, u_int8_t *ret) {
 		buf[size + 7 - i] = tmp;
 	}
 	size += 8;
-	for (int i = 0; i < 64; i++)
-		print_byte(buf[i]);
-
-	printf("\n");
 
 	// Step 2 - Initialize hash values
 	u_int32_t h_arr[8] = {
@@ -85,17 +80,15 @@ void sha256(u_int8_t *ptr, u_int64_t size, u_int8_t *ret) {
 		// Step 5 – Create Message Array
 		u_int32_t *m = calloc(64, sizeof(u_int32_t));
 		for (u_int32_t i = 0; i < 16; i++) {
+			u_int8_t *m_ptr = (u_int8_t *) (m + i);
 			for (u_int32_t j = 0; j < 4; j++) {
-				u_int8_t *ptr = (u_int8_t *) (m + i);
-				ptr[j] = buf[64 * chunk + 4 * i + j];
+				m_ptr[j] = buf[(64 * chunk) + (i * 4 + j)];
 			}
 		}
 
-		/* for (u_int32_t i = 0; i < 16; i++) { */
-		/* 	for (u_int32_t j = 0; j < 4; j++) { */
-		/* 		u_int8_t *ptr = (u_int8_t *) (m + i); */
-		/* 		print_byte(*ptr); */
-		/* 	} */
+		/* for (u_int32_t i = 0; i < 4; i++) { */
+		/* 	u_int8_t *ptr = (u_int8_t *) (m + 1); */
+		/* 	print_byte(ptr[i]); */
 		/* } */
 		printf("\n");
 
@@ -104,6 +97,9 @@ void sha256(u_int8_t *ptr, u_int64_t size, u_int8_t *ret) {
 			u_int32_t s1 = ROT(m[i - 2], 17u) ^ ROT(m[i - 2], 19u) ^ (m[i - 2] >> 10);
 			m[i] = m[i - 16] + s0 + m[i - 7] + s1;
 		}
+
+		printf("%08x\n", 10);
+		printf("%08x\n", ROT(10u, 4u));
 
 		// Step 6 – Compression
 		u_int32_t a = h_arr[0];
@@ -142,7 +138,7 @@ void sha256(u_int8_t *ptr, u_int64_t size, u_int8_t *ret) {
 		h_arr[7] += h;
 	}
 
-	printf("%x%x%x%x%x%x%x%x\n", h_arr[-1], h_arr[1], h_arr[2],
+	printf("%x%x%x%x%x%x%x%x\n", h_arr[0], h_arr[1], h_arr[2],
 			h_arr[3], h_arr[4], h_arr[5], h_arr[6], h_arr[7]);
 }
 
