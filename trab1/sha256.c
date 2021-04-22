@@ -83,7 +83,7 @@ void sha256(uint8_t *ptr, uint64_t size, uint8_t *ret) {
 		for (uint32_t i = 0; i < 16; i++) {
 			uint8_t *m_ptr = (uint8_t *) (m + i);
 			for (uint32_t j = 0; j < 4; j++) {
-				m_ptr[j] = buf[(64 * chunk) + (i * 4 + j)];
+				m_ptr[3 - j] = buf[(64 * chunk) + (i * 4 + j)];
 			}
 		}
 
@@ -98,9 +98,6 @@ void sha256(uint8_t *ptr, uint64_t size, uint8_t *ret) {
 			uint32_t s1 = ROT(m[i - 2], 17u) ^ ROT(m[i - 2], 19u) ^ (m[i - 2] >> 10);
 			m[i] = m[i - 16] + s0 + m[i - 7] + s1;
 		}
-
-		printf("%08x\n", 10);
-		printf("%08x\n", ROT(10u, 4u));
 
 		// Step 6 – Compression
 		uint32_t a = h_arr[0];
