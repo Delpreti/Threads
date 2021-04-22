@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <math.h>
+#include <stdint.h>
 #include "../timer.h"
 #include "sha256.h"
 
@@ -20,7 +21,10 @@
 // ----------------------------
 
 typedef struct {
+    uint8_t *bloco;
+    uint64_t tam_bloco;
     int dificuldade;
+    int *leave_flag;
     int thread_index;
     int total_threads;
 } thread_args;
@@ -28,10 +32,20 @@ typedef struct {
 void* thread_function(void* args_pointer){
     thread_args* args = (thread_args*) args_pointer;
 
-    //while(){}
+    uint32_t *calc_sha;
+    uint8_t nonce = 0; 
+    while(*leave_flag){
+        args->bloco[args->tam_bloco] = nonce;
+        calc_sha = sha256(args->bloco, args->tam_bloco + 1u);
+        if((calc_sha[0] >> (31 - args->dificuldade)) == 0){
+            *leave_flag = 0;
+        }
+        free(calc_sha);
+        nonce++;
+    }
 
     free(args_pointer);
-    pthread_exit(NULL);
+    pthread_exit(NULL); // passar o calc_sha aqui
 }
 
 #define spawn_thread(thread_id, index, num_threads, diff){ \

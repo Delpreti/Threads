@@ -1,0 +1,4 @@
+Ajustar a makefile (pasta src?)
+
+para compilar os testes:
+gcc trab1/test_sha.c trab1/sha256.c  -m32 -o out -Wall

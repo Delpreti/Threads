@@ -146,20 +146,10 @@ uint32_t *sha256(uint8_t *ptr, uint64_t size) {
 		h_arr[7] += h;
 	}
 
-	printf("%x%x%x%x%x%x%x%x\n", h_arr[0], h_arr[1], h_arr[2],
-			h_arr[3], h_arr[4], h_arr[5], h_arr[6], h_arr[7]);
-
 	free(m);
 	free(buf);
 
 	return h_arr;
-}
-
-// main usada para testes, remover quando estiver pronto
-int main(void) {
-	char *ptr = "hello world";
-	sha256((unsigned char *)ptr, strlen(ptr));
-	return 0;
 }
 
 /* lixao de codigo util
