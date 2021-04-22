@@ -2,6 +2,6 @@
 #define SHA_HEADER
 
 // Funcao que calcula o secure hashing algorithm 256
-void sha256(unsigned char *ptr, size_t size, unsigned char *ret);
+uint32_t *sha256(uint8_t *ptr, uint64_t size);
 
 #endif
