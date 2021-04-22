@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 #define ROT(x, n) (((x) >> n) | ((x) << (32u - n)))
 
@@ -11,39 +12,39 @@ const char *bit_rep[16] = {
     [12] = "1100", [13] = "1101", [14] = "1110", [15] = "1111",
 };
 
-void print_byte(u_int8_t byte)
+void print_byte(uint8_t byte)
 {
     printf("%s%s", bit_rep[byte >> 4], bit_rep[byte & 0x0F]);
 }
 
-void sha256(u_int8_t *ptr, u_int64_t size, u_int8_t *ret) {
-	u_int64_t input_size = size;
+void sha256(uint8_t *ptr, uint64_t size, uint8_t *ret) {
+	uint64_t input_size = size;
 
 	// Step 1 - Preprocessing
-	u_int32_t chunks;
+	uint32_t chunks;
 	for (chunks = 1; (chunks * 512) < ((size + 1) * 8); chunks++)
 		;
 
-	u_int8_t *buf = calloc(chunks * 512, sizeof(u_int8_t));
+	uint8_t *buf = calloc(chunks * 512, sizeof(uint8_t));
 
-	for (u_int64_t i = 0; i < size; i++)
+	for (uint64_t i = 0; i < size; i++)
 		buf[i] = ptr[i];
 
 	buf[size] = 0x80;
 	size = (512 * chunks - 64) / 8;
 
-	u_int64_t *input_size_ptr = (u_int64_t *) (buf + size);
+	uint64_t *input_size_ptr = (uint64_t *) (buf + size);
 	*input_size_ptr = input_size * 8;
 
-	for (u_int32_t i = 0; i < 4; i++) {
-		u_int8_t tmp = buf[size + i];
+	for (uint32_t i = 0; i < 4; i++) {
+		uint8_t tmp = buf[size + i];
 		buf[size + i] = buf[size + 7 - i];
 		buf[size + 7 - i] = tmp;
 	}
 	size += 8;
 
 	// Step 2 - Initialize hash values
-	u_int32_t h_arr[8] = {
+	uint32_t h_arr[8] = {
 		0x6a09e667,
 		0xbb67ae85,
 		0x3c6ef372,
@@ -55,7 +56,7 @@ void sha256(u_int8_t *ptr, u_int64_t size, u_int8_t *ret) {
 	};
 
 	// Step 3 – Initialize Round Constants (isso pode ficar fora da funcao)
-	u_int32_t k[64] = {
+	uint32_t k[64] = {
 		0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
 		0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
 		0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
@@ -75,26 +76,26 @@ void sha256(u_int8_t *ptr, u_int64_t size, u_int8_t *ret) {
 	};
 
 	// Step 4 - Chunk Loop
-	for (u_int32_t chunk = 0; chunk < chunks; chunk++) {
+	for (uint32_t chunk = 0; chunk < chunks; chunk++) {
 
 		// Step 5 – Create Message Array
-		u_int32_t *m = calloc(64, sizeof(u_int32_t));
-		for (u_int32_t i = 0; i < 16; i++) {
-			u_int8_t *m_ptr = (u_int8_t *) (m + i);
-			for (u_int32_t j = 0; j < 4; j++) {
+		uint32_t *m = calloc(64, sizeof(uint32_t));
+		for (uint32_t i = 0; i < 16; i++) {
+			uint8_t *m_ptr = (uint8_t *) (m + i);
+			for (uint32_t j = 0; j < 4; j++) {
 				m_ptr[j] = buf[(64 * chunk) + (i * 4 + j)];
 			}
 		}
 
-		/* for (u_int32_t i = 0; i < 4; i++) { */
-		/* 	u_int8_t *ptr = (u_int8_t *) (m + 1); */
+		/* for (uint32_t i = 0; i < 4; i++) { */
+		/* 	uint8_t *ptr = (uint8_t *) (m + 1); */
 		/* 	print_byte(ptr[i]); */
 		/* } */
 		printf("\n");
 
-		for (u_int32_t i = 16; i < 64; i++) {
-			u_int32_t s0 = ROT(m[i - 15], 7u) ^ ROT(m[i - 15], 18u) ^ (m[i - 15] >> 3);
-			u_int32_t s1 = ROT(m[i - 2], 17u) ^ ROT(m[i - 2], 19u) ^ (m[i - 2] >> 10);
+		for (uint32_t i = 16; i < 64; i++) {
+			uint32_t s0 = ROT(m[i - 15], 7u) ^ ROT(m[i - 15], 18u) ^ (m[i - 15] >> 3);
+			uint32_t s1 = ROT(m[i - 2], 17u) ^ ROT(m[i - 2], 19u) ^ (m[i - 2] >> 10);
 			m[i] = m[i - 16] + s0 + m[i - 7] + s1;
 		}
 
@@ -102,22 +103,22 @@ void sha256(u_int8_t *ptr, u_int64_t size, u_int8_t *ret) {
 		printf("%08x\n", ROT(10u, 4u));
 
 		// Step 6 – Compression
-		u_int32_t a = h_arr[0];
-		u_int32_t b = h_arr[1];
-		u_int32_t c = h_arr[2];
-		u_int32_t d = h_arr[3];
-		u_int32_t e = h_arr[4];
-		u_int32_t f = h_arr[5];
-		u_int32_t g = h_arr[6];
-		u_int32_t h = h_arr[7];
+		uint32_t a = h_arr[0];
+		uint32_t b = h_arr[1];
+		uint32_t c = h_arr[2];
+		uint32_t d = h_arr[3];
+		uint32_t e = h_arr[4];
+		uint32_t f = h_arr[5];
+		uint32_t g = h_arr[6];
+		uint32_t h = h_arr[7];
 
-		for (u_int32_t i = 0; i < 64; i++) {
-			u_int32_t s1 = ROT(e, 6u) ^ ROT(e, 11u) ^ ROT(e, 25u);
-			u_int32_t ch = (e & f) ^ ((~e) & g);
-			u_int32_t tmp1 = h + s1 + ch + k[i] + m[i];
-			u_int32_t s0 = ROT(a, 2u) ^ ROT(a, 13u) ^ ROT(a, 22u);
-			u_int32_t maj = (a & b) ^ (a & c) ^ (b & c);
-			u_int32_t tmp2 = s0 + maj;
+		for (uint32_t i = 0; i < 64; i++) {
+			uint32_t s1 = ROT(e, 6u) ^ ROT(e, 11u) ^ ROT(e, 25u);
+			uint32_t ch = (e & f) ^ ((~e) & g);
+			uint32_t tmp1 = h + s1 + ch + k[i] + m[i];
+			uint32_t s0 = ROT(a, 2u) ^ ROT(a, 13u) ^ ROT(a, 22u);
+			uint32_t maj = (a & b) ^ (a & c) ^ (b & c);
+			uint32_t tmp2 = s0 + maj;
 			h = g;
 			g = f;
 			f = e;
