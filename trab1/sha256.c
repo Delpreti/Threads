@@ -55,7 +55,7 @@ const uint32_t k[64] = {
 // ----------SHA-256-----------
 // ----------------------------
 
-uint32_t *sha256(uint8_t *ptr, uint64_t size) {
+void sha256(uint8_t *ptr, uint64_t size, char *return_buffer) {
 	uint64_t input_size = size;
 
 	const uint32_t chunks = 1 + ((uint32_t) (size + 9) / 64);
@@ -146,10 +146,13 @@ uint32_t *sha256(uint8_t *ptr, uint64_t size) {
 		h_arr[7] += h;
 	}
 
+	sprintf(return_buffer, "%x%x%x%x%x%x%x%x",
+		h_arr[0], h_arr[1], h_arr[2], h_arr[3],
+		h_arr[4], h_arr[5], h_arr[6], h_arr[7]);
+
 	free(m);
 	free(buf);
-
-	return h_arr;
+	free(h_arr);	
 }
 
 /* lixao de codigo util
