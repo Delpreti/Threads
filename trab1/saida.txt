@@ -1,0 +1,840 @@
+1 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00022 segundos
+1 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00017 segundos
+1 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00019 segundos
+1 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00016 segundos
+1 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00019 segundos
+1 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00018 segundos
+1 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00018 segundos
+1 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00017 segundos
+1 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00019 segundos
+1 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00016 segundos
+2 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00022 segundos
+2 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00022 segundos
+2 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00018 segundos
+2 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00021 segundos
+2 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00018 segundos
+2 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00021 segundos
+2 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00018 segundos
+2 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00022 segundos
+2 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00017 segundos
+2 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00021 segundos
+4 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00023 segundos
+4 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00025 segundos
+4 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00026 segundos
+4 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00026 segundos
+4 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00026 segundos
+4 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00026 segundos
+4 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00022 segundos
+4 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00027 segundos
+4 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00026 segundos
+4 thread(s) created, difficulty = 1
+Nonce: 12
+Tempo: 0.00026 segundos
+8 thread(s) created, difficulty = 1
+Nonce: 32
+Tempo: 0.00068 segundos
+8 thread(s) created, difficulty = 1
+Nonce: 32
+Tempo: 0.00087 segundos
+8 thread(s) created, difficulty = 1
+Nonce: 32
+Tempo: 0.00042 segundos
+8 thread(s) created, difficulty = 1
+Nonce: 32
+Tempo: 0.00043 segundos
+8 thread(s) created, difficulty = 1
+Nonce: 32
+Tempo: 0.00053 segundos
+8 thread(s) created, difficulty = 1
+Nonce: 32
+Tempo: 0.00074 segundos
+8 thread(s) created, difficulty = 1
+Nonce: 32
+Tempo: 0.00069 segundos
+8 thread(s) created, difficulty = 1
+Nonce: 32
+Tempo: 0.00043 segundos
+8 thread(s) created, difficulty = 1
+Nonce: 32
+Tempo: 0.00056 segundos
+8 thread(s) created, difficulty = 1
+Nonce: 32
+Tempo: 0.00042 segundos
+1 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00027 segundos
+1 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00026 segundos
+1 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00026 segundos
+1 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00026 segundos
+1 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00029 segundos
+1 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00026 segundos
+1 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00026 segundos
+1 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00026 segundos
+1 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00026 segundos
+1 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00026 segundos
+2 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00028 segundos
+2 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00027 segundos
+2 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00030 segundos
+2 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00027 segundos
+2 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00026 segundos
+2 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00025 segundos
+2 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00027 segundos
+2 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00029 segundos
+2 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00028 segundos
+2 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00028 segundos
+4 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00034 segundos
+4 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00046 segundos
+4 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00032 segundos
+4 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00041 segundos
+4 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00032 segundos
+4 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00031 segundos
+4 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00032 segundos
+4 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00040 segundos
+4 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00030 segundos
+4 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00042 segundos
+8 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00048 segundos
+8 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00047 segundos
+8 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00047 segundos
+8 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00044 segundos
+8 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00050 segundos
+8 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00056 segundos
+8 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00058 segundos
+8 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00053 segundos
+8 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00045 segundos
+8 thread(s) created, difficulty = 2
+Nonce: 59
+Tempo: 0.00046 segundos
+1 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00184 segundos
+1 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00183 segundos
+1 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00186 segundos
+1 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00184 segundos
+1 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00184 segundos
+1 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00206 segundos
+1 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00187 segundos
+1 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00187 segundos
+1 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00183 segundos
+1 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00184 segundos
+2 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00100 segundos
+2 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00100 segundos
+2 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00100 segundos
+2 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00104 segundos
+2 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00100 segundos
+2 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00100 segundos
+2 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00100 segundos
+2 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00102 segundos
+2 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00100 segundos
+2 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00100 segundos
+4 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00061 segundos
+4 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00061 segundos
+4 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00064 segundos
+4 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00061 segundos
+4 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00062 segundos
+4 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00063 segundos
+4 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00063 segundos
+4 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00061 segundos
+4 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00062 segundos
+4 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00063 segundos
+8 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00087 segundos
+8 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00072 segundos
+8 thread(s) created, difficulty = 3
+Nonce: 838
+Tempo: 0.00070 segundos
+8 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00076 segundos
+8 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00078 segundos
+8 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00078 segundos
+8 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00077 segundos
+8 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00075 segundos
+8 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00074 segundos
+8 thread(s) created, difficulty = 3
+Nonce: 820
+Tempo: 0.00074 segundos
+1 thread(s) created, difficulty = 4
+Nonce: 48774
+Tempo: 0.10104 segundos
+1 thread(s) created, difficulty = 4
+Nonce: 48774
+Tempo: 0.10030 segundos
+1 thread(s) created, difficulty = 4
+Nonce: 48774
+Tempo: 0.10048 segundos
+1 thread(s) created, difficulty = 4
+Nonce: 48774
+Tempo: 0.10079 segundos
+1 thread(s) created, difficulty = 4
+Nonce: 48774
+Tempo: 0.10075 segundos
+1 thread(s) created, difficulty = 4
+Nonce: 48774
+Tempo: 0.10261 segundos
+1 thread(s) created, difficulty = 4
+Nonce: 68147
+Tempo: 0.13983 segundos
+1 thread(s) created, difficulty = 4
+Nonce: 68147
+Tempo: 0.14044 segundos
+1 thread(s) created, difficulty = 4
+Nonce: 68147
+Tempo: 0.13991 segundos
+1 thread(s) created, difficulty = 4
+Nonce: 68147
+Tempo: 0.13955 segundos
+2 thread(s) created, difficulty = 4
+Nonce: 68147
+Tempo: 0.07014 segundos
+2 thread(s) created, difficulty = 4
+Nonce: 68147
+Tempo: 0.07099 segundos
+2 thread(s) created, difficulty = 4
+Nonce: 68147
+Tempo: 0.07158 segundos
+2 thread(s) created, difficulty = 4
+Nonce: 68147
+Tempo: 0.07149 segundos
+2 thread(s) created, difficulty = 4
+Nonce: 68147
+Tempo: 0.07159 segundos
+2 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00315 segundos
+2 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00309 segundos
+2 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00309 segundos
+2 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00313 segundos
+2 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00312 segundos
+4 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00198 segundos
+4 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00175 segundos
+4 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00184 segundos
+4 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00178 segundos
+4 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00173 segundos
+4 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00201 segundos
+4 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00181 segundos
+4 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00180 segundos
+4 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00176 segundos
+4 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00174 segundos
+8 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00132 segundos
+8 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00176 segundos
+8 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00128 segundos
+8 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00180 segundos
+8 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00126 segundos
+8 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00177 segundos
+8 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00179 segundos
+8 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00185 segundos
+8 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00128 segundos
+8 thread(s) created, difficulty = 4
+Nonce: 2823
+Tempo: 0.00178 segundos
+1 thread(s) created, difficulty = 5
+Nonce: 499390
+Tempo: 1.02046 segundos
+1 thread(s) created, difficulty = 5
+Nonce: 2831160
+Tempo: 5.74632 segundos
+1 thread(s) created, difficulty = 5
+Nonce: 836591
+Tempo: 1.70070 segundos
+1 thread(s) created, difficulty = 5
+Nonce: 737424
+Tempo: 1.49702 segundos
+1 thread(s) created, difficulty = 5
+Nonce: 177295
+Tempo: 0.36208 segundos
+1 thread(s) created, difficulty = 5
+Nonce: 177295
+Tempo: 0.35981 segundos
+1 thread(s) created, difficulty = 5
+Nonce: 177295
+Tempo: 0.35973 segundos
+1 thread(s) created, difficulty = 5
+Nonce: 1138683
+Tempo: 2.30642 segundos
+1 thread(s) created, difficulty = 5
+Nonce: 1517767
+Tempo: 3.08189 segundos
+1 thread(s) created, difficulty = 5
+Nonce: 1103519
+Tempo: 2.24377 segundos
+2 thread(s) created, difficulty = 5
+Nonce: 504347
+Tempo: 0.52031 segundos
+2 thread(s) created, difficulty = 5
+Nonce: 1901124
+Tempo: 1.95967 segundos
+2 thread(s) created, difficulty = 5
+Nonce: 2211034
+Tempo: 2.27939 segundos
+2 thread(s) created, difficulty = 5
+Nonce: 1623311
+Tempo: 1.68358 segundos
+2 thread(s) created, difficulty = 5
+Nonce: 1493971
+Tempo: 1.54347 segundos
+2 thread(s) created, difficulty = 5
+Nonce: 980641
+Tempo: 1.01533 segundos
+2 thread(s) created, difficulty = 5
+Nonce: 188300
+Tempo: 0.19567 segundos
+2 thread(s) created, difficulty = 5
+Nonce: 851739
+Tempo: 0.88383 segundos
+2 thread(s) created, difficulty = 5
+Nonce: 851739
+Tempo: 0.88123 segundos
+2 thread(s) created, difficulty = 5
+Nonce: 258509
+Tempo: 0.26875 segundos
+4 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.05565 segundos
+4 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.05620 segundos
+4 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.05633 segundos
+4 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.05630 segundos
+4 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.05635 segundos
+4 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.05633 segundos
+4 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.05639 segundos
+4 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.05650 segundos
+4 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.05679 segundos
+4 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.05645 segundos
+8 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.03605 segundos
+8 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.02877 segundos
+8 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.03590 segundos
+8 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.02898 segundos
+8 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.02908 segundos
+8 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.03598 segundos
+8 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.02903 segundos
+8 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.02909 segundos
+8 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.02983 segundos
+8 thread(s) created, difficulty = 5
+Nonce: 106187
+Tempo: 0.02898 segundos
+1 thread(s) created, difficulty = 6
+Nonce: 3057622
+Tempo: 6.24059 segundos
+1 thread(s) created, difficulty = 6
+Nonce: 16704454
+Tempo: 34.12429 segundos
+1 thread(s) created, difficulty = 6
+Nonce: 3368359
+Tempo: 6.86889 segundos
+1 thread(s) created, difficulty = 6
+Nonce: 23284514
+Tempo: 47.28004 segundos
+1 thread(s) created, difficulty = 6
+Nonce: 4083677
+Tempo: 8.33157 segundos
+1 thread(s) created, difficulty = 6
+Nonce: 9617743
+Tempo: 19.63121 segundos
+1 thread(s) created, difficulty = 6
+Nonce: 5328346
+Tempo: 10.80784 segundos
+1 thread(s) created, difficulty = 6
+Nonce: 3163996
+Tempo: 6.42717 segundos
+1 thread(s) created, difficulty = 6
+Nonce: 10034833
+Tempo: 20.37262 segundos
+1 thread(s) created, difficulty = 6
+Nonce: 24314993
+Tempo: 49.56149 segundos
+2 thread(s) created, difficulty = 6
+Nonce: 7643975
+Tempo: 7.94094 segundos
+2 thread(s) created, difficulty = 6
+Nonce: 16980097
+Tempo: 17.57162 segundos
+2 thread(s) created, difficulty = 6
+Nonce: 2027577
+Tempo: 2.09928 segundos
+2 thread(s) created, difficulty = 6
+Nonce: 981656
+Tempo: 1.01303 segundos
+2 thread(s) created, difficulty = 6
+Nonce: 29058931
+Tempo: 30.03069 segundos
+2 thread(s) created, difficulty = 6
+Nonce: 4109628
+Tempo: 4.25245 segundos
+2 thread(s) created, difficulty = 6
+Nonce: 1449388
+Tempo: 1.49790 segundos
+2 thread(s) created, difficulty = 6
+Nonce: 33517334
+Tempo: 34.51216 segundos
+2 thread(s) created, difficulty = 6
+Nonce: 22908768
+Tempo: 24.31339 segundos
+2 thread(s) created, difficulty = 6
+Nonce: 9186447
+Tempo: 9.48151 segundos
+4 thread(s) created, difficulty = 6
+Nonce: 11952733
+Tempo: 6.37127 segundos
+4 thread(s) created, difficulty = 6
+Nonce: 33429779
+Tempo: 17.63396 segundos
+4 thread(s) created, difficulty = 6
+Nonce: 24945015
+Tempo: 13.23824 segundos
+4 thread(s) created, difficulty = 6
+Nonce: 6588551
+Tempo: 3.49127 segundos
+4 thread(s) created, difficulty = 6
+Nonce: 9769071
+Tempo: 5.18337 segundos
+4 thread(s) created, difficulty = 6
+Nonce: 14148311
+Tempo: 7.50621 segundos
+4 thread(s) created, difficulty = 6
+Nonce: 4892146
+Tempo: 4.30930 segundos
+4 thread(s) created, difficulty = 6
+Nonce: 1698679
+Tempo: 0.89709 segundos
+4 thread(s) created, difficulty = 6
+Nonce: 20099261
+Tempo: 10.66025 segundos
+4 thread(s) created, difficulty = 6
+Nonce: 7715376
+Tempo: 4.08850 segundos
+8 thread(s) created, difficulty = 6
+Nonce: 8728883
+Tempo: 2.55512 segundos
+8 thread(s) created, difficulty = 6
+Nonce: 21600866
+Tempo: 5.78574 segundos
+8 thread(s) created, difficulty = 6
+Nonce: 19456028
+Tempo: 6.28863 segundos
+8 thread(s) created, difficulty = 6
+Nonce: 23696641
+Tempo: 9.28692 segundos
+8 thread(s) created, difficulty = 6
+Nonce: 869606
+Tempo: 0.28356 segundos
+8 thread(s) created, difficulty = 6
+Nonce: 41979013
+Tempo: 11.65013 segundos
+8 thread(s) created, difficulty = 6
+Nonce: 39037471
+Tempo: 12.69851 segundos
+8 thread(s) created, difficulty = 6
+Nonce: 32979066
+Tempo: 8.85255 segundos
+8 thread(s) created, difficulty = 6
+Nonce: 19573529
+Tempo: 5.28125 segundos
+8 thread(s) created, difficulty = 6
+Nonce: 21828575
+Tempo: 9.73779 segundos
+1 thread(s) created, difficulty = 7
+Nonce: 151490490
+Tempo: 311.36172 segundos
+1 thread(s) created, difficulty = 7
+Nonce: 61994471
+Tempo: 126.43032 segundos
+1 thread(s) created, difficulty = 7
+Nonce: 52985445
+Tempo: 108.20349 segundos
+1 thread(s) created, difficulty = 7
+Nonce: 134767649
+Tempo: 274.16639 segundos
+1 thread(s) created, difficulty = 7
+Nonce: 154656114
+Tempo: 350.72018 segundos
+1 thread(s) created, difficulty = 7
+Nonce: 160626560
+Tempo: 326.64602 segundos
+1 thread(s) created, difficulty = 7
+Nonce: 65432553
+Tempo: 133.03893 segundos
+1 thread(s) created, difficulty = 7
+Nonce: 165529365
+Tempo: 336.49326 segundos
+1 thread(s) created, difficulty = 7
+Nonce: 817467888
+Tempo: 1687.52647 segundos
+1 thread(s) created, difficulty = 7
+Nonce: 172538332
+Tempo: 351.47308 segundos
+2 thread(s) created, difficulty = 7
+Nonce: 641914192
+Tempo: 679.67265 segundos
+2 thread(s) created, difficulty = 7
+Nonce: 158377802
+Tempo: 163.76526 segundos
+2 thread(s) created, difficulty = 7
+Nonce: 65288847
+Tempo: 67.97037 segundos
+2 thread(s) created, difficulty = 7
+Nonce: 93049582
+Tempo: 102.78419 segundos
+2 thread(s) created, difficulty = 7
+Nonce: 504068743
+Tempo: 527.48551 segundos
+2 thread(s) created, difficulty = 7
+Nonce: 197062218
+Tempo: 246.68093 segundos
+2 thread(s) created, difficulty = 7
+Nonce: 580598253
+Tempo: 600.12666 segundos
+2 thread(s) created, difficulty = 7
+Nonce: 175537865
+Tempo: 184.19649 segundos
+2 thread(s) created, difficulty = 7
+Nonce: 203802471
+Tempo: 210.56382 segundos
+2 thread(s) created, difficulty = 7
+Nonce: 57680538
+Tempo: 59.37210 segundos
+4 thread(s) created, difficulty = 7
+Nonce: 68148566
+Tempo: 36.23981 segundos
+4 thread(s) created, difficulty = 7
+Nonce: 129341160
+Tempo: 94.74143 segundos
+4 thread(s) created, difficulty = 7
+Nonce: 160626406
+Tempo: 85.23544 segundos
+4 thread(s) created, difficulty = 7
+Nonce: 103041980
+Tempo: 60.98852 segundos
+4 thread(s) created, difficulty = 7
+Nonce: 207925726
+Tempo: 157.01111 segundos
+4 thread(s) created, difficulty = 7
+Nonce: 186984934
+Tempo: 132.03972 segundos
+4 thread(s) created, difficulty = 7
+Nonce: 216981230
+Tempo: 114.84224 segundos
+4 thread(s) created, difficulty = 7
+Nonce: 60323674
+Tempo: 31.95101 segundos
+4 thread(s) created, difficulty = 7
+Nonce: 7015851
+Tempo: 3.89710 segundos
+4 thread(s) created, difficulty = 7
+Nonce: 84796921
+Tempo: 48.66418 segundos
+8 thread(s) created, difficulty = 7
+Nonce: 139138994
+Tempo: 53.74934 segundos
+8 thread(s) created, difficulty = 7
+Nonce: 273390766
+Tempo: 104.43195 segundos
+8 thread(s) created, difficulty = 7
+Nonce: 237196047
+Tempo: 96.95641 segundos
+8 thread(s) created, difficulty = 7
+Nonce: 610761736
+Tempo: 225.55788 segundos
+8 thread(s) created, difficulty = 7
+Nonce: 231718354
+Tempo: 89.38910 segundos
+8 thread(s) created, difficulty = 7
+Nonce: 290788677
+Tempo: 118.76781 segundos
+8 thread(s) created, difficulty = 7
+Nonce: 52693108
+Tempo: 23.51816 segundos
+8 thread(s) created, difficulty = 7
+Nonce: 41160330
+Tempo: 17.56719 segundos
+8 thread(s) created, difficulty = 7
+Nonce: 446549618
+Tempo: 190.50237 segundos
+8 thread(s) created, difficulty = 7
+Nonce: 26397228
+Tempo: 11.15057 segundos

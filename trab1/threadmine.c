@@ -146,7 +146,7 @@ int main(int argc, char** argv){
     for(thread = 0; thread < N_THREADS; thread++){
         spawn_thread(tid_sistema, thread, N_THREADS, difficulty, head);
     }
-    printf("%d thread(s) created.\n", thread);
+    printf("%d thread(s) created, difficulty = %d\n", thread, difficulty);
 
     // ---- Aguardo das threads ----
     // -----------------------------
