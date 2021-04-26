@@ -8,29 +8,12 @@
 
 #define ROT(x, n) (((x) >> n) | ((x) << (32u - n)))
 
-uint32_t asm_rot(uint32_t x, uint32_t n){ // mesma coisa que a macro acima, apenas para referencia
-    __asm__ ("rorl %%cl, %0" : "+r" (x) : "c" (n));
-    return x;
-}
-
 // macro para verificar resultado da alocacao de memoria
 #define check_alloc(pointer, message){ \
     if (pointer == NULL) { \
         printf(message); \
         exit(-1); \
     } \
-}
-
-const char *bit_rep[16] = {
-    [ 0] = "0000", [ 1] = "0001", [ 2] = "0010", [ 3] = "0011",
-    [ 4] = "0100", [ 5] = "0101", [ 6] = "0110", [ 7] = "0111",
-    [ 8] = "1000", [ 9] = "1001", [10] = "1010", [11] = "1011",
-    [12] = "1100", [13] = "1101", [14] = "1110", [15] = "1111",
-};
-
-// funcao para printar um byte como 8 bits
-void print_byte(uint8_t byte) {
-    printf("%s%s", bit_rep[byte >> 4], bit_rep[byte & 0x0F]);
 }
 
 const uint32_t k[64] = {
@@ -154,12 +137,3 @@ void sha256(uint8_t *ptr, uint64_t size, char *return_buffer) {
 	free(buf);
 	free(h_arr);	
 }
-
-/* lixao de codigo util
-
-for (uint32_t i = 0; i < 4; i++) {
- 	uint8_t *ptr = (uint8_t *) (m + 1);
- 	print_byte(ptr[i]);
-}
-printf("\n");
-*/
