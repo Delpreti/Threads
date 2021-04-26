@@ -4,7 +4,7 @@ OBJS = sha256.o threadmine.o
 TEST_OBJS = sha256.o test_sha.o
 
 threadmine: $(OBJS)
-	$(CC) -o threadmine $(LDLIBS) $(OBJS)
+	$(CC) -o threadmine $(OBJS) $(LDLIBS)
 
 sha256.o:
 threadmine.o:
