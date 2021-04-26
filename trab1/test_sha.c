@@ -14,7 +14,7 @@ int main(void) {
         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "201e92c62b2beea4bea6cf7ab38d635b76d29fd866aadab55a4b72b3b6fc3105"
     };
-    char buffer[256];
+    char buffer[65];
     for(int i = 0; i < NUM_PHRASES; i++){
         sha256((unsigned char *)frases[i], strlen(frases[i]), buffer);
         if( strcmp(buffer, hashes[i]) ){

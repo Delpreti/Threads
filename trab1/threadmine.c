@@ -24,7 +24,7 @@ uint8_t *gen_header(){
     uint8_t *h = calloc(HEADER_SIZE, sizeof(uint8_t));
     check_alloc(h, "falha na geracao do header\n");
     for(int u = 0; u < 76; u++){
-        h[u] = rand();
+        h[u] = rand() % UINT8_MAX;
     }
     return h;
 }
@@ -45,11 +45,18 @@ int flag;
 void* thread_function(void* args_pointer){
     thread_args* args = (thread_args*) args_pointer;
 
-    uint32_t nonce = args->thread_index;
-    char ret_buffer[256];
+    uint8_t *copy_header = calloc(HEADER_SIZE, sizeof(uint8_t));
+    check_alloc(copy_header, "falha na copia do header\n");
+    for(int u = 0; u < 76; u++){
+        copy_header[u] = args->block_header[u];
+    }
+
+    uint32_t *nonce = (uint32_t *) (copy_header + 76);
+    *nonce = args->thread_index;
+
+    char ret_buffer[65];
     while(*(args->leave_flag)){
-        args->block_header[76] = nonce;
-        sha256(args->block_header, 80, ret_buffer);
+        sha256(copy_header, 80, ret_buffer);
         int j;
         for(j = 0; j < args->dificuldade; j++){
             if(ret_buffer[j] != 'b'){
@@ -59,11 +66,11 @@ void* thread_function(void* args_pointer){
         if(j == args->dificuldade){
             *(args->leave_flag) = 0;
         }
-        if(nonce == UINT32_MAX){
+        if(*nonce == UINT32_MAX){
             printf("nonce nao encontrada\n");
             *(args->leave_flag) = 0;
         }
-        nonce += args->total_threads;
+        *nonce += args->total_threads;
     }
 
     free(args_pointer);
@@ -132,6 +139,7 @@ int main(int argc, char** argv){
             exit(-1);
         }
     }
+    free(head);
 
     GET_TIME(end);
     printf("Tempo: %.5lf segundos\n", end - start);
