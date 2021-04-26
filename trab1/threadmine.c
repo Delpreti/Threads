@@ -41,11 +41,12 @@ typedef struct {
 } thread_args;
 
 int flag;
+pthread_mutex_t flag_mutex;
 
 void* thread_function(void* args_pointer){
     thread_args* args = (thread_args*) args_pointer;
 
-    uint8_t *copy_header = calloc(HEADER_SIZE, sizeof(uint8_t));
+    uint8_t *copy_header = malloc(HEADER_SIZE * sizeof(uint8_t));
     check_alloc(copy_header, "falha na copia do header\n");
     for(int u = 0; u < 76; u++){
         copy_header[u] = args->block_header[u];
@@ -55,25 +56,36 @@ void* thread_function(void* args_pointer){
     *nonce = args->thread_index;
 
     char ret_buffer[65];
-    while(*(args->leave_flag)){
+	int found = 0;
+    while(*(args->leave_flag) && !found){
         sha256(copy_header, 80, ret_buffer);
-        int j;
-        for(j = 0; j < args->dificuldade; j++){
-            if(ret_buffer[j] != 'b'){
-                break;
+		found = 1;
+        for(int i = 0; i < args->dificuldade; i++){
+            if(ret_buffer[i] != 'b'){
+				found = 0;
+				break;
             }
         }
-        if(j == args->dificuldade){
-            *(args->leave_flag) = 0;
-        }
-        if(*nonce == UINT32_MAX){
-            printf("nonce nao encontrada\n");
-            *(args->leave_flag) = 0;
-        }
+
         *nonce += args->total_threads;
     }
 
-    free(args_pointer);
+	if (found) {
+		pthread_mutex_lock(&flag_mutex);
+		*(args->leave_flag) = 0;
+		pthread_mutex_unlock(&flag_mutex);
+
+		uint32_t *golden_nonce = malloc(sizeof(uint32_t));
+		check_alloc(golden_nonce, "Erro de alocacao\n");
+		*golden_nonce = *nonce;
+
+		free(args_pointer);
+		free(copy_header);
+		pthread_exit(golden_nonce);
+	}
+
+	free(args_pointer);
+	free(copy_header);
     pthread_exit(NULL); // passar a nonce aqui ?
 }
 
@@ -104,16 +116,23 @@ int main(int argc, char** argv){
         return 1;
     }
 
-    const int difficulty = strtol( argv[1], NULL, 10 ); // quantidade de zeros necessarios
-    if(difficulty < 0){
-        printf("A <dificuldade> deve ser maior ou igual a 0.\n");
+	char *endptr;
+    const int difficulty = strtol(argv[1], &endptr, 0); // quantidade de zeros necessarios
+	if (*argv[1] == '\0' || *endptr != '\0' || difficulty <= 0) {
+        printf("A <dificuldade> deve ser um número maior que 0.\n");
         return 1;
     }
-    const int N_THREADS = strtol( argv[2], NULL, 10 );
+
+    const int N_THREADS = strtol(argv[2], &endptr, 0);
+	if (*argv[2] == '\0' || *endptr != '\0' || N_THREADS <= 0) {
+        printf("O <numero de threads> deve ser um número maior que 0.\n");
+        return 1;
+    }
 
     // inicializacao
     srand(time(NULL));
     uint8_t *head = gen_header();
+	pthread_mutex_init(&flag_mutex, NULL);
     flag = 1;
     double start, end;
 
@@ -134,12 +153,17 @@ int main(int argc, char** argv){
     // ---- Aguardo das threads ----
     // -----------------------------
     for(thread = 0; thread < N_THREADS; thread++){
-        if( pthread_join(tid_sistema[thread], NULL) ){
+		uint32_t *ret;
+        if( pthread_join(tid_sistema[thread], (void **) &ret) ){
             printf("pthread_join() not successfull\n");
             exit(-1);
         }
+
+		if (ret)
+			printf("Nonce: %u\n", *ret);
     }
     free(head);
+	pthread_mutex_destroy(&flag_mutex);
 
     GET_TIME(end);
     printf("Tempo: %.5lf segundos\n", end - start);
