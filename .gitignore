@@ -10,3 +10,7 @@ sha_test
 *.fls
 *.log
 *.synctex.gz
+*.bbl
+*.bcf
+*.blg
+*.run.xml

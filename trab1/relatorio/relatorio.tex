@@ -5,7 +5,14 @@
 \usepackage{minted}
 \usepackage{indentfirst}
 \usepackage{amsmath}
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\usepackage{csquotes}
 
+\addbibresource{referencias.bib}
 \DeclareMathOperator{\sha}{SHA256}
 
 \author{Gabriel da Fonseca Ottoboni Pinho - DRE 119043838\\
@@ -17,7 +24,7 @@ Rodrigo Delpreti de Siqueira - DRE 119022353}
 \maketitle
 \newpage
 
-\section{Descrição do trabalho}
+\section{Descrição do problema}
 \subsection{Sobre a Bitcoin}
 Bitcoin é uma criptomoeda criada por Satoshi Nakamoto em 2009,
 tendo como objetivo ser uma moeda digital descentralizada.
@@ -30,7 +37,7 @@ que verifica a assinatura e a existência dos fundos.
 
 Um ponto importante é que cada transação é verificada por todos,
 de modo que nenhum integrante precisa confiar em nenhum outro,
-sendo capaz de verificar a verdade independentemente.
+cada um sendo capaz de verificar a verdade independentemente.
 Os integrantes da rede que coletam as transações
 e as colocam em blocos são os mineradores
 e o sistema de consenso que determina qual minerador
@@ -42,12 +49,13 @@ tem o direito de criar o bloco.
 Esse desafio consiste em achar um número \textit{nonce},
 tal que quando o \textit{hash} SHA-256 do \textit{header} do bloco
 (que contém a \textit{nonce})
-seja menor que um certo número.
+seja menor que um número chamado de dificuldade.
 Pelo fato do SHA-256 ser uma função \textit{hash} criptográfica,
 a única forma de achar a \textit{nonce} correta é chutando.
 Em outras palavas, não é possível achar um
 $x$ tal que $\sha(x) = y$.
-Por outro lado, tendo um $x$, é fácil verificar se $\sha(x) = y$.
+Por outro lado, tendo um $x$,
+é fácil verificar se $\sha(x) = y$.
 Essa propriedade é importante,
 pois, dessa forma, todos os integrantes da rede podem
 verificar facilmente se a \textit{nonce} encontrada
@@ -58,8 +66,8 @@ O SHA-256 é uma função \textit{hash} criptográfica,
 que gera uma sequência de 256 bits pseudo-aleatória
 para uma entrada qualquer.
 O cálculo dessa função é computacionalmente custoso,
-e é \textit{work} na PoW da Bitcoin.
-O cálculo da função consiste em 3 passos:
+e é o \textit{work} na PoW da Bitcoin.
+O cálculo da função consiste em 3 passos principais:
 \begin{enumerate}
 	\item Pré-processamento
 	\item Criação do array de mensagens
@@ -67,8 +75,8 @@ O cálculo da função consiste em 3 passos:
 \end{enumerate}
 
 Durante o pré-processamento,
-a entrada é será divida em pedaços chamado \textit{chunks}
-de 512 bits cada.
+a entrada é será divida em
+pedaços chamados \textit{chunks} de 512 bits cada.
 Depois disso, para cada \textit{chunk},
 um array de 64 elementos de 4 bytes é
 preenchido com base no conteúdo do \textit{chunk} atual.
@@ -76,25 +84,75 @@ Por fim, 8 variáveis são inicializadas com valores pré-determinados
 que serão modificados em cada \textit{round} do loop de compressão.
 O valor final do \textit{hash} será a concatenação das 8 variáveis.
 
-\section{A solução}
+\section{Projeto da solução concorrente}
 O objetivo do nosso trabalho é
 implementar o SHA-256 e
 usá-lo para simular a mineração da Bitcoin.
 Em outras palavras,
-vamos gerar 76 bytes aleatórios,
-que simularão o \textit{header} de um bloco da Bitcoin.
-Em seguida, acrescentaremos mais 4 bytes,
-que representarão a \textit{nonce},
-totalizando 80 bytes.
-Depois, calcularemos o \textit{hash} SHA-256 desses 80 bytes:
-se o resultado for menor que um certo número $n$,
-a \textit{nonce} é uma solução válida.
-Senão, alteramos a \textit{nonce} e tentamos novamente
+temos que receber como entrada
+um número $d$ representando a dificuldade e
+o número $n$ de threads a serem utilizados.
+A saída será uma \textit{nonce} que
+resolveria um bloco com essa dificuldade e
+o tempo levado para calculá-la.
+A dificuldade será o número de vezes seguidas 
+que o byte \texttt{0x00} aparece no
+início do \textit{hash} calculado.
+Como foi explicado na sessão anterior,
+não é exatamente assim que a dificuldade é definida
+na implementação da Bitcoin,
+mas foi decidido simplificar essa etapa.
+
+A simulação funcionará da seguinte forma:
+\begin{enumerate}
+	\item 76 bytes aleatórios são gerados.
+		Esses bytes representarão todos os campos
+		do \textit{header} do bloco,
+		exceto a \textit{nonce}.
+	\item Cada thread calculará o \textit{hash} da concatenação
+		desses mesmos 76 bytes com mais 4 bytes, a \textit{nonce}.
+		Temos assim um total de 80 bytes,
+		que é o tamanho real do \textit{header} de
+		um bloco de Bitcoin.
+	\item Se $\sha(\text{\textit{header}})$
+		começar com pelo menos $d$ bytes \texttt{0x00} seguidos,
+		conseguimos achar uma \textit{nonce} correta, fim.
+		Senão, repetimos as etapas 2 e 3
+		com uma \textit{nonce} diferente.
+\end{enumerate}
 
 É importante notar que cada tentativa
 é completamente independente da outra, ou seja,
 podemos facilmente acrescentar mais threads,
-com cada um testando diferentes valores para a \textit{nonce}
-até que a resposta certa seja encontrada.
+com cada uma testando diferentes valores para a \textit{nonce}
+até que a resposta correta seja encontrada.
+A estratégia utilizada foi
+testar valores consecutivos para a \textit{nonce},
+e distribuir esses números
+entre as $n$ threads de $n$ em $n$.
+Quando alguma das threads achar a resposta,
+uma variável global \textit{flag} é setada
+e as outras threads terminam.
+A thread que encontrou a resposta
+retorna seu valor para a thread principal,
+que imprime os resultados na tela.
+
+\section{Casos de teste}
+A principal função do programa que
+precisa ser testada é \texttt{sha256},
+que recebe um sequência de bytes e
+retorna uma string com o valor hexadecimal
+do \textit{hash} SHA-256 da entrada.
+Cada teste chama essa função com
+valores de entrada pré-determinados e
+compara o \textit{hash} retornado
+com um valor correto pré-calculado.
+
+\section{Avaliação de desempenho}
+
+\section{Discussão}
+
+\nocite{*}
+\printbibliography
 
 \end{document}
