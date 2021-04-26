@@ -57,7 +57,7 @@ void* thread_function(void* args_pointer){
 
     char ret_buffer[65];
 	int found = 0;
-    while(*(args->leave_flag) && !found){
+    while(*(args->leave_flag)){
         sha256(copy_header, 80, ret_buffer);
 		found = 1;
         for(int i = 0; i < args->dificuldade; i++){
@@ -66,23 +66,21 @@ void* thread_function(void* args_pointer){
 				break;
             }
         }
+        if (found) {
+            pthread_mutex_lock(&flag_mutex);
+            *(args->leave_flag) = 0;
+            pthread_mutex_unlock(&flag_mutex);
 
+            uint32_t *golden_nonce = malloc(sizeof(uint32_t));
+            check_alloc(golden_nonce, "Erro de alocacao\n");
+            *golden_nonce = *nonce;
+
+            free(args_pointer);
+            free(copy_header);
+            pthread_exit(golden_nonce);
+        }
         *nonce += args->total_threads;
     }
-
-	if (found) {
-		pthread_mutex_lock(&flag_mutex);
-		*(args->leave_flag) = 0;
-		pthread_mutex_unlock(&flag_mutex);
-
-		uint32_t *golden_nonce = malloc(sizeof(uint32_t));
-		check_alloc(golden_nonce, "Erro de alocacao\n");
-		*golden_nonce = *nonce;
-
-		free(args_pointer);
-		free(copy_header);
-		pthread_exit(golden_nonce);
-	}
 
 	free(args_pointer);
 	free(copy_header);
