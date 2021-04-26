@@ -161,6 +161,7 @@ int main(int argc, char** argv){
 
 		if (ret)
 			printf("Nonce: %u\n", *ret);
+		free(ret);
     }
     free(head);
 	pthread_mutex_destroy(&flag_mutex);
