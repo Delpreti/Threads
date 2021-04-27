@@ -8,6 +8,7 @@
 \usepackage[backend=biber,block=ragged]{biblatex}
 \usepackage{csquotes}
 \usepackage{pgfplots}
+\usepackage{multirow}
 
 \pgfplotsset{width=7cm,compat=1.17}
 \addbibresource{referencias.bib}
@@ -139,9 +140,22 @@ retorna seu valor para a thread principal,
 que imprime os resultados na tela.
 
 \subsection{Do repositório}
-O repositório contém um grupo de arquivos, cuja função está brevemente descrita aqui para fins de organização. O algoritmo que calcula propriamente o hash sha-256 está contido no arquivo \textmd{sha256.c}, como uma função. Esta função recebe um ponteiro que aponte para o header do bloco, o tamanho do header e um ponteiro usado para retornar o resultado como string. Ela deve ser acessada pelas outras partes do programa utilizando o arquivo \textmd{sha256.h} disponibilizado.
+O repositório contém um grupo de arquivos,
+cuja função está brevemente descrita aqui para fins de organização.
+O algoritmo que calcula propriamente o hash sha-256 está contido no arquivo \textmd{sha256.c}, como uma função.
+Esta função recebe um ponteiro que aponte para o header do bloco, o tamanho do header e um ponteiro usado para retornar o resultado como string.
+Ela deve ser acessada pelas outras partes do programa utilizando o arquivo \textmd{sha256.h} disponibilizado.
 
-O programa propriamente dito, para cumprir os objetivos acima citados, está no arquivo \textmd{threadmine.c}. Ele recebe como parâmetros a dificuldade do algoritmo e o número de threads que serão utilizadas. Assim, chamamos esse programa múltiplas vezes em \textsl{script.sh} para gerarmos os resultados necessários para análise posterior. Os valores utilizados na análise estão todos contidos no arquivo de texto \textsl{saida.txt}.
+O programa propriamente dito,
+para cumprir os objetivos acima citados,
+está no arquivo \textmd{threadmine.c}.
+Ele recebe como parâmetros a dificuldade do algoritmo
+e o número de threads que serão utilizadas.
+Assim, chamamos esse programa múltiplas vezes
+em \textsl{script.sh} para gerarmos os resultados
+necessários para análise posterior.
+Os valores utilizados na análise estão todos contidos
+no arquivo de texto \textsl{saida.txt}.
 
 Por fim, os casos de teste estão separados no arquivo \textsl{testsha.c}. Há uma makefile disponibilizada, de modo que para compilar o programa basta clonar o repositório e utilizar o comando \texttt{make}. Para executar, basta chamar threadmine \textless dificuldade\textgreater\space\textless numero de threads\textgreater.
 
@@ -156,23 +170,42 @@ valores de entrada pré-determinados e
 compara o \textit{hash} retornado
 com um valor correto pré-calculado.
 
+\newpage
 \section{Avaliação de desempenho}
-Realizamos 10 execuções para cada configuração de dificuldade e thread. Devido à natureza do problema, iremos utilizar para fins comparativos a média de tempo dessas 10 execuções. Essa quantidade pode não gerar ainda grande confiabilidade estatística do resultado, porém acreditamos ser suficiente para a devida análise e escopo deste trabalho. Seria ingênuo testar execuções individuais, pois a aleatoriedade dos valores pode levar execuções individuais a apresentarem tempos muito díspares.
+Realizamos 10 execuções para cada configuração de dificuldade e thread.
+Devido à natureza do problema,
+iremos utilizar para fins comparativos
+a média de tempo dessas 10 execuções.
+Essa quantidade pode não gerar ainda
+grande confiabilidade estatística do resultado,
+porém acreditamos ser suficiente
+para a devida análise e escopo deste trabalho.
+Seria ingênuo testar execuções individuais,
+pois a aleatoriedade dos valores pode levar
+execuções individuais a apresentarem tempos muito díspares.
 
 A tabela abaixo apresenta o tempo médio das 10 execuções, para 7 dificuldades em ordem crescente, com 1, 2, 4 e 8 threads.
 
+\hspace{9px}
+
 %\begin{table}
-	\begin{tabular}{|c|c|c|c|c|c|c|}
+\resizebox{\textwidth}{!}{%
+	\begin{tabular}{|c|c|c|c|c|c|c|c|}
 		\hline
-		0,000206 & 0,000831 & 0,010532 & 0,145358 & 2,354084 & 20,96 & 400,6 \\
+		\multirow{2}{*}{Threads} & \multicolumn{7}{c|}{Dificuldade} \\
+		\cline{2-8}
+		 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
 		\hline
-		0,000249 & 0,000450 & 0,003139 & 0,036904 & 1,235175 & 13,27 & 284,26 \\
+		1 & 0,000206 & 0,000831 & 0,010532 & 0,145358 & 2,354084 & 20,96 & 400,6 \\
 		\hline
-		0,000372 & 0,000455 & 0,002497 & 0,023467 & 0,508354 & 7,34 & 76,56 \\
+		2 & 0,000249 & 0,000450 & 0,003139 & 0,036904 & 1,235175 & 13,27 & 284,26 \\
 		\hline
-		0,000755 & 0,000744 & 0,001785 & 0,012743 & 0,346573 & 7,24 & 93,16 \\
+		4 & 0,000372 & 0,000455 & 0,002497 & 0,023467 & 0,508354 & 7,34 & 76,56 \\
+		\hline
+		8 & 0,000755 & 0,000744 & 0,001785 & 0,012743 & 0,346573 & 7,24 & 93,16 \\
 		\hline
 	\end{tabular}
+}
 	%\caption{Média de tempo (s) de execução para diferentes configurações de dificuldade e threads.}
 %\end{table}
 
@@ -213,12 +246,25 @@ A tabela abaixo apresenta o tempo médio das 10 execuções, para 7 dificuldades
 \end{tikzpicture}
 \end{center}
 
-Podemos observar diretamente que a utilização de threads não foi vantajosa para as dificuldades 1 e 2. O tempo gasto com overhead de criação das threads foi superior ao ganho de velocidade.
+Podemos observar diretamente que
+a utilização de threads não foi vantajosa
+para as dificuldades 1 e 2.
+O tempo gasto com overhead de criação das threads
+foi superior ao ganho de velocidade.
 
-Outro resultado muito interessante do experimento é que o tempo se torna mais consistente com um número maior de threads. Quanto mais valores são testados para um mesmo intervalo de tempo, maiores as chances de obter tempos similares entre as execuções. Olharemos para a variança dos resultados em dificuldade 5 como exemplo:
+Outro resultado muito interessante do experimento
+é que o tempo se torna mais consistente
+com um número maior de threads.
+Quanto mais valores são testados para um mesmo intervalo de tempo,
+maiores as chances de obter tempos similares entre as execuções.
+Olharemos para a variança dos resultados em dificuldade 5 como exemplo:
+
+\hspace{9px}
 
 \begin{tabular}{|c|c|c|c|c|}
-	\hline		
+	\hline
+	& \multicolumn{4}{c|}{Threads}\\
+	\hline
 	& 1	& 2	& 4	& 8\\
 	\hline
 	1 & 1,81866	& 2,25835 & 0,12451	& 0,84497 \\
@@ -247,12 +293,36 @@ Outro resultado muito interessante do experimento é que o tempo se torna mais c
 	\hline
 \end{tabular}
 
-Na tabela acima, vemos que a redução na variança é mais acentuada que a redução do tempo médio de execução.
+\hspace{20px}
+
+Na tabela acima, vemos que a redução na variança
+é mais acentuada que a redução do tempo médio de execução.
 
 \section{Discussão}
-Apesar do problema possuir diversas variáveis de cunho aleatório, podemos estimar razoavelmente o tempo de execução a partir da probabilidade de se encontrar um \textit{hash} com determinada dificuldade. A dificuldade como especificamos em código consiste nos $n$ primeiros caracteres do \textit{hash} gerado como resultado da \texttt{sha256} devem ser iguais a \texttt{\textquotesingle{}b\textquotesingle{}}, onde $n$ é o valor da dificuldade passado como parâmetro na chamada de \texttt{threadmine}. Existem 16 caracteres possíveis para cada posição, pois o algoritmo retorna como string os valores em hexadecimal. Supondo que a função de \textit{hash} apresente uma distribuição uniforme de valores, a probabilidade de acerto será de $\sfrac{1}{16^{n}}$.
+Apesar do problema possuir diversas variáveis de cunho aleatório,
+podemos estimar razoavelmente o tempo de execução
+a partir da probabilidade de se encontrar um \textit{hash} com determinada dificuldade.
+Conforme especificado no código,
+para que a execução termine adequadamente,
+os $d$ primeiros caracteres
+do \textit{hash} gerado como resultado
+da \texttt{sha256} devem ser iguais a \texttt{\textquotesingle{}b\textquotesingle{}},
+onde $d$ é o valor da dificuldade
+passado como parâmetro na chamada de \texttt{threadmine}.
+Existem 16 caracteres possíveis para cada posição,
+pois o algoritmo retorna como string os valores em hexadecimal.
+Supondo que a função de \textit{hash}
+apresente uma distribuição uniforme de valores,
+a probabilidade de acerto será de $\sfrac{1}{16^{n}}$.
 
-Este resultado nos indica que o tempo médio deverá aumentar exponencialmente com a dificuldade. Por isso, os testes foram realizados apenas até a dificuldade 7: para dificulade 8, o tempo estimado de execução para uma única thread seria superior a uma hora.
+Este resultado nos indica que o tempo médio
+deverá aumentar exponencialmente com a dificuldade.
+Essa estimativa foi verificada na prática,
+como podemos observar no gráfico Tempo x Dificuldade
+(note que o tempo está em escala logarítmica).
+Por tal razão, os testes foram realizados apenas até a dificuldade 7:
+para dificulade 8, o tempo estimado de execução
+para uma única thread seria superior a uma hora.
 
 \nocite{*}
 \printbibliography
