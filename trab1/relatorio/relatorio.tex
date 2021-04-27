@@ -5,11 +5,7 @@
 \usepackage{amsmath}
 \usepackage{xfrac}
 \usepackage{lmodern}
-\usepackage[
-backend=biber,
-style=alphabetic,
-sorting=ynt
-]{biblatex}
+\usepackage[backend=biber,block=ragged]{biblatex}
 \usepackage{csquotes}
 
 \addbibresource{referencias.bib}
@@ -99,8 +95,8 @@ A saída será uma \textit{nonce} que
 resolveria um bloco com essa dificuldade e
 o tempo levado para calculá-la.
 A dificuldade será o número de vezes seguidas 
-que o byte \texttt{0x00} aparece no
-início do \textit{hash} calculado.
+que o caractere \texttt{\textquotesingle{}b\textquotesingle{}} aparece no
+início da representação hexadecimal do \textit{hash} calculado.
 Como foi explicado na sessão anterior,
 não é exatamente assim que a dificuldade é definida
 na implementação da Bitcoin,
