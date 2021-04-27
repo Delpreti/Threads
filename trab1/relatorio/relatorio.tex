@@ -64,7 +64,7 @@ verificar facilmente se a \textit{nonce} encontrada
 é uma solução válida de fato.
 
 \subsection{Sobre o SHA-256}
-O SHA-256 é uma função \textit{hash} criptográfica,
+O SHA-256 é uma função \textit{hash} criptográfica
 que gera uma sequência de 256 bits pseudo-aleatória
 para uma entrada qualquer.
 O cálculo dessa função é computacionalmente custoso,
@@ -116,9 +116,9 @@ A simulação funcionará da seguinte forma:
 		Temos assim um total de 80 bytes,
 		que é o tamanho real do \textit{header} de
 		um bloco de Bitcoin.
-	\item Se $\sha(\text{\textit{header}})$
-		começar com pelo menos $d$ bytes \texttt{0x00} seguidos,
-		conseguimos achar uma \textit{nonce} correta, fim.
+	\item Se a representação hexadecimal de $\sha(\text{\textit{header}})$
+		começar com pelo menos $d$ caracteres \texttt{\textquotesingle{}b\textquotesingle{}} seguidos,
+		conseguimos achar uma \textit{nonce} correta; fim.
 		Senão, repetimos as etapas 2 e 3
 		com uma \textit{nonce} diferente.
 \end{enumerate}
@@ -126,13 +126,15 @@ A simulação funcionará da seguinte forma:
 É importante notar que cada tentativa
 é completamente independente da outra, ou seja,
 podemos facilmente acrescentar mais threads,
-com cada uma testando diferentes valores para a \textit{nonce}
+cada uma testando diferentes valores para a \textit{nonce}
 até que a resposta correta seja encontrada.
 A estratégia utilizada foi
 testar valores consecutivos para a \textit{nonce}
 de modo que esses números são distribuídos
 entre as $n$ threads de $n$ em $n$.
-Quando alguma das threads achar a resposta,
+Os valores necessários para o cálculo do \textit{hash}
+são passados por argumentos para as threads e,
+quando alguma das threads achar a resposta,
 uma variável global \textit{flag} é setada
 e as outras threads terminam.
 A thread que encontrou a resposta
@@ -157,7 +159,7 @@ necessários para análise posterior.
 Os valores utilizados na análise estão todos contidos
 no arquivo de texto \textsl{saida.txt}.
 
-Por fim, os casos de teste estão separados no arquivo \textsl{testsha.c}. Há uma makefile disponibilizada, de modo que para compilar o programa basta clonar o repositório e utilizar o comando \texttt{make}. Para executar, basta chamar threadmine \textless dificuldade\textgreater\space\textless numero de threads\textgreater.
+Por fim, os casos de teste estão separados no arquivo \textsl{testsha.c}. Há uma \texttt{makefile} disponibilizada, de modo que para compilar o programa basta clonar o repositório e utilizar o comando \texttt{make}; para compilar e executar os testes, \texttt{make test}. Para executar o programa em si, basta chamar \texttt{./threadmine <dificuldade> <numero de threads>}
 
 \section{Casos de teste}
 A principal função do programa que
@@ -169,6 +171,12 @@ Cada teste chama essa função com
 valores de entrada pré-determinados e
 compara o \textit{hash} retornado
 com um valor correto pré-calculado.
+
+Além disso, foi utilizado um \textit{shell script}
+para executar o programa com
+diversos valores de $n$ e $d$ múltiplas vezes.
+Os resultados dessas execuções
+foram utilizados na próxima seção.
 
 \newpage
 \section{Avaliação de desempenho}
@@ -184,7 +192,7 @@ Seria ingênuo testar execuções individuais,
 pois a aleatoriedade dos valores pode levar
 execuções individuais a apresentarem tempos muito díspares.
 
-A tabela abaixo apresenta o tempo médio das 10 execuções, para 7 dificuldades em ordem crescente, com 1, 2, 4 e 8 threads.
+A tabela abaixo apresenta o tempo médio das 10 execuções, para 7 dificuldades em ordem crescente, com 1, 2, 4 e 8 threads. A máquina utilizada roda Windows 10, com um processador AMD Ryzen 7 3700x, que possui 8 núcleos físicos e 16 núcleos lógicos.
 
 \begin{center}
 \resizebox{\textwidth}{!}{%
@@ -232,7 +240,7 @@ A tabela abaixo apresenta o tempo médio das 10 execuções, para 7 dificuldades
 	xlabel=Dificuldade,
 	ylabel=Tempo (log s),
 	xtick={1,2,3,4,5,6,7},
-	legend entries={$t=1$,$t=2$,$t=4$,$t=8$},
+	legend entries={$n=1$,$n=2$,$n=4$,$n=8$},
 	legend style={at={(1.4,1)}}
 ]
 \addplot coordinates {(1,0.000206) (2,0.000831) (3,0.010532) (4,0.145358) (5,2.354084) (6,20.96) (7,400.6)};
@@ -296,6 +304,7 @@ Na tabela acima, vemos que a redução na variança
 é mais acentuada que a redução do tempo médio de execução.
 
 \section{Discussão}
+\subsection{Análise dos resultados}
 Apesar do problema possuir diversas variáveis de cunho aleatório,
 podemos estimar razoavelmente o tempo de execução
 a partir da probabilidade de se encontrar um \textit{hash} com determinada dificuldade.
@@ -315,11 +324,34 @@ a probabilidade de acerto será de $\sfrac{1}{16^{n}}$.
 Este resultado nos indica que o tempo médio
 deverá aumentar exponencialmente com a dificuldade.
 Essa estimativa foi verificada na prática,
-como podemos observar no gráfico Tempo x Dificuldade
+como podemos observar no gráfico Tempo $\times$ Dificuldade
 (note que o tempo está em escala logarítmica).
 Por tal razão, os testes foram realizados apenas até a dificuldade 7:
 para dificulade 8, o tempo estimado de execução
 para uma única thread seria superior a uma hora.
+
+\subsection{Intel® SHA Extensions}
+Apesar de não terem sido utilizadas nesse trabalho,
+processadores modernos possuem 3 instruções
+dedicadas ao cálculo do SHA-256, que são:
+\begin{itemize}
+	\item \texttt{SHA256MSG1}
+	\item \texttt{SHA256MSG2}
+	\item \texttt{SHA256RNDS2}
+\end{itemize}
+
+As duas primeiras aceleram o cálculo
+do array de mensagens,
+enquanto a última calcula
+duas iterações do loop de compressão.
+Essas instruções utilizam registradores de 128 bits,
+que possibilitam um grande número de entradas para cada instrução.
+O fato de o cálculo dessa função fazer parte dos processadores modernos
+mostra o quão relevante o SHA-256 realmente é,
+tendo aplicações muito além da Bitcoin.
+O uso dessas intruções seria uma maneira de
+melhorar a performance da simulação,
+acelerando o cálculo do \textit{hash} dramaticamente.
 
 \nocite{*}
 \printbibliography
