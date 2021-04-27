@@ -1,0 +1,18 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\babel@toc {brazilian}{}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {1}Descrição do problema}{3}{}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.1}Sobre a Bitcoin}{3}{}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {1.2}Sobre o SHA-256}{3}{}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2}Projeto da solução concorrente}{4}{}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1}Do repositório}{5}{}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3}Casos de teste}{5}{}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4}Avaliação de desempenho}{5}{}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5}Discussão}{6}{}%
