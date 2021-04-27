@@ -7,7 +7,9 @@
 \usepackage{lmodern}
 \usepackage[backend=biber,block=ragged]{biblatex}
 \usepackage{csquotes}
+\usepackage{pgfplots}
 
+\pgfplotsset{width=7cm,compat=1.17}
 \addbibresource{referencias.bib}
 \DeclareMathOperator{\sha}{SHA256}
 
@@ -173,6 +175,43 @@ A tabela abaixo apresenta o tempo médio das 10 execuções, para 7 dificuldades
 	\end{tabular}
 	%\caption{Média de tempo (s) de execução para diferentes configurações de dificuldade e threads.}
 %\end{table}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+	xlabel=Threads,
+	ylabel=Tempo (log s),
+	xtick={1,2,4,8},
+	legend entries={$d=1$,$d=2$,$d=3$,$d=4$,$d=5$,$d=6$,$d=7$},
+	legend style={at={(1.4,1)}}
+]
+\addplot coordinates {(1,0.000206) (2,0.000249) (4,0.000372) (8,0.000755)};
+\addplot coordinates {(1,0.000831) (2,0.000450) (4,0.000455) (8,0.000744)};
+\addplot coordinates {(1,0.010532) (2,0.003139) (4,0.002497) (8,0.001785)};
+\addplot coordinates {(1,0.145358) (2,0.036904) (4,0.023467) (8,0.012743)};
+\addplot coordinates {(1,2.354084) (2,1.235175) (4,0.508354) (8,0.346573)};
+\addplot coordinates {(1,20.96) (2,13.27) (4,7.34) (8,7.24)};
+\addplot coordinates {(1,400.6) (2,284.26) (4,76.56) (8,93.16)};
+\end{semilogyaxis}
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+	xlabel=Dificuldade,
+	ylabel=Tempo (log s),
+	xtick={1,2,3,4,5,6,7},
+	legend entries={$t=1$,$t=2$,$t=4$,$t=8$},
+	legend style={at={(1.4,1)}}
+]
+\addplot coordinates {(1,0.000206) (2,0.000831) (3,0.010532) (4,0.145358) (5,2.354084) (6,20.96) (7,400.6)};
+\addplot coordinates {(1,0.000249) (2,0.000450) (3,0.003139) (4,0.036904) (5,1.235175) (6,13.27) (7,284.26)};
+\addplot coordinates {(1,0.000372) (2,0.000455) (3,0.002497) (4,0.023467) (5,0.508354) (6,7.34) (7,76.56)};
+\addplot coordinates {(1,0.000755) (2,0.000744) (3,0.001785) (4,0.012743) (5,0.346573) (6,7.24) (7,93.16)};
+\end{semilogyaxis}
+\end{tikzpicture}
+\end{center}
 
 Podemos observar diretamente que a utilização de threads não foi vantajosa para as dificuldades 1 e 2. O tempo gasto com overhead de criação das threads foi superior ao ganho de velocidade.
 
