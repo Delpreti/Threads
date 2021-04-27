@@ -1,10 +1,10 @@
 \documentclass[12pt]{article}
 
 \usepackage[brazilian]{babel}
-% \usepackage[margin=1in]{geometry}
-\usepackage{minted}
 \usepackage{indentfirst}
 \usepackage{amsmath}
+\usepackage{xfrac}
+\usepackage{lmodern}
 \usepackage[
 backend=biber,
 style=alphabetic,
@@ -49,13 +49,14 @@ A ideia da PoW é que o minerador que conseguir
 a resposta de um desafio primeiro
 tem o direito de criar o bloco.
 Esse desafio consiste em achar um número \textit{nonce},
-tal que quando o \textit{hash} SHA-256 do \textit{header} do bloco
+tal que o \textit{hash} SHA-256 do \textit{header} do bloco
 (que contém a \textit{nonce})
 seja menor que um número chamado de dificuldade.
 Pelo fato do SHA-256 ser uma função \textit{hash} criptográfica,
-a única forma de achar a \textit{nonce} correta é chutando.
-Em outras palavas, não é possível achar um
-$x$ tal que $\sha(x) = y$.
+a única forma de achar uma \textit{nonce} correta é
+testando valores.
+Em outras palavas, não há um método fácil de achar
+um $x$ tal que $\sha(x) = y$.
 Por outro lado, tendo um $x$,
 é fácil verificar se $\sha(x) = y$.
 Essa propriedade é importante,
@@ -77,7 +78,7 @@ O cálculo da função consiste em 3 passos principais:
 \end{enumerate}
 
 Durante o pré-processamento,
-a entrada é será divida em
+a entrada é dividida em
 pedaços chamados \textit{chunks} de 512 bits cada.
 Depois disso, para cada \textit{chunk},
 um array de 64 elementos de 4 bytes é
@@ -93,7 +94,7 @@ usá-lo para simular a mineração da Bitcoin.
 Em outras palavras,
 temos que receber como entrada
 um número $d$ representando a dificuldade e
-o número $n$ de threads a serem utilizados.
+um número $n$ de threads a serem utilizadas.
 A saída será uma \textit{nonce} que
 resolveria um bloco com essa dificuldade e
 o tempo levado para calculá-la.
@@ -129,8 +130,8 @@ podemos facilmente acrescentar mais threads,
 com cada uma testando diferentes valores para a \textit{nonce}
 até que a resposta correta seja encontrada.
 A estratégia utilizada foi
-testar valores consecutivos para a \textit{nonce},
-e distribuir esses números
+testar valores consecutivos para a \textit{nonce}
+de modo que esses números são distribuídos
 entre as $n$ threads de $n$ em $n$.
 Quando alguma das threads achar a resposta,
 uma variável global \textit{flag} é setada
@@ -144,12 +145,12 @@ O repositório contém um grupo de arquivos, cuja função está brevemente desc
 
 O programa propriamente dito, para cumprir os objetivos acima citados, está no arquivo \textmd{threadmine.c}. Ele recebe como parâmetros a dificuldade do algoritmo e o número de threads que serão utilizadas. Assim, chamamos esse programa múltiplas vezes em \textsl{script.sh} para gerarmos os resultados necessários para análise posterior. Os valores utilizados na análise estão todos contidos no arquivo de texto \textsl{saida.txt}.
 
-Por fim, os casos de teste estão separados no arquivo \textsl{testsha.c}. Há uma makefile disponibilizada, de modo que para compilar o programa basta clonar o repositório e utilizar o comando make. Para executar, basta chamar threadmine \textless dificuldade\textgreater\space\textless numero de threads\textgreater.
+Por fim, os casos de teste estão separados no arquivo \textsl{testsha.c}. Há uma makefile disponibilizada, de modo que para compilar o programa basta clonar o repositório e utilizar o comando \texttt{make}. Para executar, basta chamar threadmine \textless dificuldade\textgreater\space\textless numero de threads\textgreater.
 
 \section{Casos de teste}
 A principal função do programa que
 precisa ser testada é \texttt{sha256},
-que recebe um sequência de bytes e
+que recebe uma sequência de bytes e
 retorna uma string com o valor hexadecimal
 do \textit{hash} SHA-256 da entrada.
 Cada teste chama essa função com
@@ -214,7 +215,7 @@ Outro resultado muito interessante do experimento é que o tempo se torna mais c
 Na tabela acima, vemos que a redução na variança é mais acentuada que a redução do tempo médio de execução.
 
 \section{Discussão}
-Apesar do problema possuir diversas variáveis de cunho aleatório, podemos estimar razoavelmente o tempo de execução à partir da probabilidade de se encontrar um hash com determinada dificuldade. A dificuldade como especificamos em código consiste nos n primeiros caracteres do hash gerado como resultado da sha256 devem ser iguais a 'b', onde n é o valor da dificuldade passado como parâmetro na chamada de threadmine. Existem 16 caracteres possíveis para cada posição, pois o algoritmo retorna como string os valores em hexadecimal. Supondo que a função de hash apresente uma distribuição uniforme de valores, a probabilidade de acerto será de $\frac{1}{16^{n}}$.
+Apesar do problema possuir diversas variáveis de cunho aleatório, podemos estimar razoavelmente o tempo de execução a partir da probabilidade de se encontrar um \textit{hash} com determinada dificuldade. A dificuldade como especificamos em código consiste nos $n$ primeiros caracteres do \textit{hash} gerado como resultado da \texttt{sha256} devem ser iguais a \texttt{\textquotesingle{}b\textquotesingle{}}, onde $n$ é o valor da dificuldade passado como parâmetro na chamada de \texttt{threadmine}. Existem 16 caracteres possíveis para cada posição, pois o algoritmo retorna como string os valores em hexadecimal. Supondo que a função de \textit{hash} apresente uma distribuição uniforme de valores, a probabilidade de acerto será de $\sfrac{1}{16^{n}}$.
 
 Este resultado nos indica que o tempo médio deverá aumentar exponencialmente com a dificuldade. Por isso, os testes foram realizados apenas até a dificuldade 7: para dificulade 8, o tempo estimado de execução para uma única thread seria superior a uma hora.
 
