@@ -1,12 +1,16 @@
 /*
 Atividade de laboratorio #5 de Computacao Concorrente
---- remover comentario nas linhas 148 e 180 caso deseje visualizar o array
-    (e usar um tamanho pequeno para nao floodar o terminal)
+--  Essa implementacao permite que o usuario especifique uma quantidade de threads menor que #elementos / 2.
+    desde que a quantidade de threads seja um divisor desse valor.
+--  O programa calcula todos os indices onde a soma sera realizada antes de criar as threads.
+    Esses indices ficam salvos em duas matrizes, indices_get e indices_set;
+    cada linha da matriz deve esperar que toda a linha anterior de somas tenha executado;
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <math.h>
 #include <time.h>
 
 // ----------- utils ----------
@@ -50,6 +54,41 @@ Atividade de laboratorio #5 de Computacao Concorrente
     printf("%d\n", array[i]); \
 }
 
+// ---- Matriz de indices ----
+// ---------------------------
+
+// Funcao de doer o cerebro
+// Calcula os indices onde sera feita a soma e salva em duas matrizes
+void init_matrix(int* ma, int* mb, int lines, int cols){
+    int current_line = 0;
+    int u, v, w, aux1, aux2;
+    for(u = 0; u < cols; u++){
+        ma[u] = 2 * u;
+        mb[u] = ma[u] + 1;
+    }
+    current_line = 1;
+    for(w = 0; w < (pow(2, lines - 1) - 1); w++){
+        aux1 = pow(2, current_line - 1);
+        aux2 = pow(2, current_line);
+        for(v = 0; v < aux2; v++){
+            ma[u + v] = mb[u - cols + aux1 - 1];
+            mb[u + v] = aux2 + v + (2 * (u % cols));
+        }
+        u += v;
+        current_line = u / cols;
+    }
+}
+
+void print_mat(int* ma, int* mb, int l, int c){
+    int elements = l * c;
+    for(int i = 0; i < elements; i++){
+        printf("%d%d ", ma[i], mb[i]);
+        if(i % c == c - 1){
+            printf("\n");
+        }
+    }
+}
+
 // --------- Threads ----------
 // ----------------------------
 
@@ -76,20 +115,17 @@ typedef struct {
     int total_threads;
     int* vector;
     int vector_size;
+    int* index_get;
+    int* index_set;
 } thread_args;
 
 void* thread_function(void* args_pointer){
     thread_args* args = (thread_args*) args_pointer;
 
-    int aux;
-    for(int i = 1; i < args->vector_size; i *= 2){
-        if(args->thread_index >= i){
-            aux = args->vector[args->thread_index - i];
-        } else {
-            aux = 0;
-        }
-        barreira(args->total_threads);
-        args->vector[args->thread_index] += aux;
+    int limit = log2(args->vector_size) * args->vector_size / 2;
+    int i;
+    for(i = args->thread_index; i < limit; i += args->total_threads){
+        args->vector[args->index_set[i]] += args->vector[args->index_get[i]];
         barreira(args->total_threads);
     }
 
@@ -97,7 +133,7 @@ void* thread_function(void* args_pointer){
     pthread_exit(NULL);
 }
 
-#define spawn_thread(thread_id, index, num_threads, vetor, tam_vetor){ \
+#define spawn_thread(thread_id, index, num_threads, vetor, tam_vetor, index_g, index_s){ \
     thread_args* args = (thread_args*) malloc( sizeof(thread_args) ); \
     check_alloc(args, "Erro de alocacao\n"); \
     \
@@ -105,6 +141,8 @@ void* thread_function(void* args_pointer){
     args->total_threads = num_threads; \
     args->vector = vetor; \
     args->vector_size = tam_vetor; \
+    args->index_get = index_g; \
+    args->index_set = index_s; \
     \
     if( pthread_create(thread_id + index, NULL, thread_function, (void*) args) ){ \
         printf("pthread_create() not successfull\n"); \
@@ -119,7 +157,7 @@ int main(int argc, char** argv){
     // ---- Leitura da entrada ----
     // ----------------------------
     if(argc < 2){
-        printf("Digite: %s <tamanho do array>\n", argv[0]);
+        printf("Digite: %s <tamanho do array> <numero de threads (opcional)>\n", argv[0]);
         return 1;
     }
 
@@ -128,7 +166,21 @@ int main(int argc, char** argv){
         printf("O <tamanho do array> deve ser maior ou igual a 1.\n");
         return 1;
     }
-    const int N_THREADS = ARR_SIZE;
+    int N_THREADS_T;
+    if(argc > 2){
+        N_THREADS_T = strtol( argv[2], NULL, 10 );
+        if(ARR_SIZE % N_THREADS_T != 0){
+            N_THREADS_T = ARR_SIZE / 2;
+            printf("O numero de threads fornecido deve ser divisor do tamanho do array, a quantidade foi ajustada.\n");
+        }
+    } else {
+        N_THREADS_T = ARR_SIZE / 2;
+    }
+    if(N_THREADS_T > ARR_SIZE / 2){
+        N_THREADS_T = ARR_SIZE / 2;
+        printf("Foram solicitadas mais threads que o necessario, a quantidade foi ajustada.\n");
+    }
+    const int N_THREADS = N_THREADS_T;
 
     // ------- Inicializacao -------
     // -----------------------------
@@ -145,12 +197,23 @@ int main(int argc, char** argv){
     fill_array_rand(my_array, ARR_SIZE);
     copy_array(my_array, my_array_copy, ARR_SIZE);
 
-    // print_int_array(my_array, ARR_SIZE);
+    const int LINES = log2(ARR_SIZE);
+    const int COLS = ARR_SIZE / 2;
+
+    int* indices_get = (int*) malloc(LINES * COLS * sizeof(int));
+    check_alloc(indices_get, "erro na alocacao de matriz\n");
+    int* indices_set = (int*) malloc(LINES * COLS * sizeof(int));
+    check_alloc(indices_set, "erro na alocacao de matriz\n");
+
+    init_matrix(indices_get, indices_set, LINES, COLS);
+
+    //print_mat(indices_get, indices_set, ARR_SIZE, colunas);
+    print_int_array(my_array, ARR_SIZE);
 
     // ---- Criacao das threads ----
     // -----------------------------
     for(thread = 0; thread < N_THREADS; thread++){
-        spawn_thread(tid_sistema, thread, N_THREADS, my_array, ARR_SIZE);
+        spawn_thread(tid_sistema, thread, N_THREADS, my_array, ARR_SIZE, indices_get, indices_set);
     }
     printf("%d thread(s) created.\n", thread);
 
@@ -177,9 +240,11 @@ int main(int argc, char** argv){
         printf("Algoritmo executado corretamente.\n");
     }
 
-    // print_int_array(my_array, ARR_SIZE);
+    print_int_array(my_array, ARR_SIZE);
 
     free(my_array);
     free(my_array_copy);
+    free(indices_get);
+    free(indices_set);
     return 0;
 }
