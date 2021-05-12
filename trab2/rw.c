@@ -1,17 +1,18 @@
 #include <pthread.h>
+#include "rw.h"
 
 void rw_init(Rw *rw) {
 	rw->readers = 0;
 	rw->writers = 0;
-	pthread_mutex_init(&rw->mutex);
-	pthread_cond_init(&rw->read_cond);
-	pthread_cond_init(&rw->write_cond);
+	pthread_mutex_init(&rw->mutex, NULL);
+	pthread_cond_init(&rw->read_cond, NULL);
+	pthread_cond_init(&rw->write_cond, NULL);
 }
 
 void rw_destroy(Rw *rw) {
 	pthread_mutex_destroy(&rw->mutex);
-	pthread_destroy_init(&rw->read_cond);
-	pthread_destroy_init(&rw->write_cond);
+	pthread_cond_destroy(&rw->read_cond);
+	pthread_cond_destroy(&rw->write_cond);
 }
 
 void rw_get_read(Rw *rw) {
