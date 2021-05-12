@@ -69,7 +69,7 @@ typedef struct {
     int total_threads;
 } thread_args;
 
-void reader_function(void* args_pointer){ // ATUADOR
+void* reader_function(void* args_pointer){ // ATUADOR
     thread_args* args = (thread_args*) args_pointer;
 
     // loop principal
@@ -86,10 +86,9 @@ void reader_function(void* args_pointer){ // ATUADOR
 
     free(args_pointer);
     pthread_exit(NULL);
-
 }
 
-void writer_function(void* args_pointer){ // SENSOR
+void* writer_function(void* args_pointer){ // SENSOR
     thread_args* args = (thread_args*) args_pointer;
 
     // loop principal
@@ -104,6 +103,36 @@ void writer_function(void* args_pointer){ // SENSOR
     pthread_exit(NULL);
 }
 
+#define spawn_thread_read(thread_id, index, num_threads, rwm, b){ \
+    thread_args* args = (thread_args*) malloc( sizeof(thread_args) ); \
+    check_alloc(args, "Erro de alocacao\n"); \
+    \
+    args->buffer = b; \
+    args->rw_man = rwm; \
+    args->thread_index = index; \
+    args->total_threads = num_threads; \
+    \
+    if( pthread_create(thread_id + index, NULL, reader_function, (void*) args) ){ \
+        printf("pthread_create() not successfull\n"); \
+        exit(-1); \
+    } \
+}
+
+#define spawn_thread_write(thread_id, index, num_threads, rwm, b){ \
+    thread_args* args = (thread_args*) malloc( sizeof(thread_args) ); \
+    check_alloc(args, "Erro de alocacao\n"); \
+    \
+    args->buffer = b; \
+    args->rw_man = rwm; \
+    args->thread_index = index; \
+    args->total_threads = num_threads; \
+    \
+    if( pthread_create(thread_id + index, NULL, writer_function, (void*) args) ){ \
+        printf("pthread_create() not successfull\n"); \
+        exit(-1); \
+    } \
+}
+
 // ----------------------------
 
 int main(int argc, char** argv){
@@ -115,7 +144,7 @@ int main(int argc, char** argv){
         return 1;
     }
     char *endptr;
-    const int NTHREADS = strtol(argv[1], &endptr, 0); // quantidade de zeros necessarios
+    const int N_THREADS = strtol(argv[1], &endptr, 0); // quantidade de zeros necessarios
 
     // ---- Inicialização ----
     // -----------------------
@@ -127,7 +156,27 @@ int main(int argc, char** argv){
     current = 0;
     state = 0;
 
-    printf("%.1f\n", get_temperature_rand());
+    int thread;
+    pthread_t tid_sistema[N_THREADS];
+
+    // ---- Criacao das threads ----
+    // -----------------------------
+    for(thread = 0; thread < N_THREADS; thread++){
+        spawn_thread_write(tid_sistema, thread, N_THREADS, &rw_manager, buffer);
+        spawn_thread_read(tid_sistema, thread, N_THREADS, &rw_manager, buffer);
+    }
+    printf("%d thread(s) created\n", thread);
+
+    // ---- Aguardo das threads ----
+    // -----------------------------
+    for(thread = 0; thread < N_THREADS; thread++){
+        if( pthread_join(tid_sistema[thread], NULL) ){
+            printf("pthread_join() not successfull\n");
+            exit(-1);
+        }
+    }
+
+    //printf("%.1f\n", get_temperature_rand());
 
     // ----- Encerramento -----
     // ------------------------
