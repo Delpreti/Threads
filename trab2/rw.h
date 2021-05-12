@@ -1,3 +1,5 @@
+#include <pthread.h>
+
 typedef struct Rw {
 	int readers, writers;
 	pthread_mutex_t mutex;
