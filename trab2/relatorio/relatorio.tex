@@ -1,0 +1,104 @@
+\documentclass[12pt]{article}
+
+\usepackage[brazilian]{babel}
+\usepackage{indentfirst}
+% \usepackage{amsmath}
+\usepackage{minted}
+
+\author{Gabriel da Fonseca Ottoboni Pinho - DRE 119043838\\
+Rodrigo Delpreti de Siqueira - DRE 119022353}
+\title{Trabalho II de Computação Concorrente:}
+\date{13/05/2021}
+
+\begin{document}
+\maketitle
+\newpage
+
+\section{Leitores e escritores}
+\subsection{O problema}
+O modelo de leitores e escritores
+tem como objetivo coordenar o acesso
+a um certo recurso entre várias threads.
+No caso desse trabalho,
+o recurso é o array
+que contém as medições dos sensores.
+
+A necessidade de coordenar
+os acessos a esse array existe
+por conta de condições de corrida
+que podem ocorrer quando
+uma thread tenta ler/escrever
+enquanto outra thread já estava escrevendo no array.
+Dessa forma, temos os seguintes requisitos:
+\begin{itemize}
+	\item Se alguma thread estiver escrevedo,
+		nenhuma outra thread pode ler ou escrever.
+	\item Se uma ou mais threads estiverem lendo,
+		nenhuma outra thread pode escrever.
+\end{itemize}
+
+Sabendo disso,
+é necessário um sistema
+no qual cada thread pede permissão
+para acessar o array e,
+caso o acesso não seja possível naquele momento,
+a thread é bloqueada.
+
+\subsection{A solução}
+A solução implementada no trabalho
+consiste em um \textit{struct} \texttt{Rw}
+que armazena os números de threads
+atualmente lendo e escrevendo.
+Esses números são atualizados
+por meio de funções que as threads chamam
+antes e depois de iniciar suas tarefas.
+
+Internamente,
+o controle de acesso é feito utilizando os \textit{structs}
+\texttt{pthread\_\-mutex\_t} e \texttt{pthread\_cond\_t}.
+O primeiro garante exclusão mútua durante o acesso
+às variáveis que armazenam os números de leitores e escritores,
+enquanto que o segundo é utilizado para controlar
+o bloqueio das threads que aguardam permissão para ler/escrever.
+
+\newpage
+\begin{minted}{c}
+Rw rw;
+rw_init(&rw);
+
+rw_get_read(&rw);
+/* Ler à vontade */
+rw_release_read(&rw);
+
+rw_get_write(&rw);
+/* Escrever à vontade */
+rw_release_write(&rw);
+
+rw_destroy(&rw);
+\end{minted}
+
+Como mostrado no exemplo acima,
+a função \texttt{rw\_init}
+inicializa os campos do \textit{struct},
+enquanto que \texttt{rw\_destroy} faz o oposto.
+Antes de ler,
+a thread deve chamar \texttt{rw\_get\_read},
+que retornará imediatamente
+se nenhuma outra estiver escrevendo.
+Caso contrário, a thread ficará bloqueada
+até que nenhuma outra thread esteja escrevendo.
+Ao acabar de ler,
+a thread deve chamar \texttt{rw\_release\_read}.
+As funções \texttt{rw\_get\_write} e \texttt{rw\_release\_write}
+funcionam de forma análoga.
+
+Quando há alguma thread aguardando permissão para escrever,
+a prioridade para escrita é garantida de duas formas:
+\begin{itemize}
+	\item Assim que o último leitor chama \texttt{rw\_release\_read},
+		é garantido que uma thread será liberada para escrita.
+	\item Assim que um escritor chama \texttt{rw\_release\_write},
+		é garantido que uma thread será liberada para escrita.
+\end{itemize}
+
+\end{document}
