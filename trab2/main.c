@@ -157,20 +157,25 @@ int main(int argc, char** argv){
     state = 0;
 
     int thread;
-    pthread_t tid_sistema[N_THREADS];
+    pthread_t tid_write[N_THREADS];
+    pthread_t tid_read[N_THREADS];
 
     // ---- Criacao das threads ----
     // -----------------------------
     for(thread = 0; thread < N_THREADS; thread++){
-        spawn_thread_write(tid_sistema, thread, N_THREADS, &rw_manager, buffer);
-        spawn_thread_read(tid_sistema, thread, N_THREADS, &rw_manager, buffer);
+        spawn_thread_write(tid_write, thread, N_THREADS, &rw_manager, buffer);
+        spawn_thread_read(tid_read, thread, N_THREADS, &rw_manager, buffer);
     }
     printf("%d thread(s) created\n", thread);
 
     // ---- Aguardo das threads ----
     // -----------------------------
     for(thread = 0; thread < N_THREADS; thread++){
-        if( pthread_join(tid_sistema[thread], NULL) ){
+        if( pthread_join(tid_write[thread], NULL) ){
+            printf("pthread_join() not successfull\n");
+            exit(-1);
+        }
+        if( pthread_join(tid_read[thread], NULL) ){
             printf("pthread_join() not successfull\n");
             exit(-1);
         }
