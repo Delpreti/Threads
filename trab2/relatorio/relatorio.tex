@@ -8,7 +8,7 @@
 \author{Gabriel da Fonseca Ottoboni Pinho - DRE 119043838\\
 Rodrigo Delpreti de Siqueira - DRE 119022353}
 \title{Trabalho II de Computação Concorrente:}
-\date{13/05/2021}
+\date{21/05/2021}
 
 \begin{document}
 \maketitle
@@ -100,5 +100,35 @@ a prioridade para escrita é garantida de duas formas:
 	\item Assim que um escritor chama \texttt{rw\_release\_write},
 		é garantido que uma thread será liberada para escrita.
 \end{itemize}
+
+\subsection{Testes}
+
+Os testes realizados sobre a implementação que criamos
+para o padrão de leitores/escritores visam atender
+os seguintes requisitos:
+\begin{enumerate}
+\item mais de um leitor pode ler ao mesmo tempo
+uma área de dados compartilhada;
+\item apenas um escritor pode escrever
+de cada vez nessa mesma área;
+\item enquanto o escritor está escrevendo,
+os leitores não podem ler.
+\end{enumerate}
+Estes requisitos são avaliados individualmente,
+no arquivo separado \textit{rwtest.c}.
+
+\section{Monitoramento de temperatura}
+
+A função \texttt{check\_temperature} verifica se haverá
+um caso de sinal vermelho, amarelo ou condição normal,
+com base nos requisitos do trabalho. O estado exibido
+no console apenas é atualizado quando ocorre uma mudança.
+
+\section{Discussão}
+
+Durante a execução, observamos que o Alerta Vermelho
+é raramente acionado.
+
+\section{Referências Bibliográficas}
 
 \end{document}

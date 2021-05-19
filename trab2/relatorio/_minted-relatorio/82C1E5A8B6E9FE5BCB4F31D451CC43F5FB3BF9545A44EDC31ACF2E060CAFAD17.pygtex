@@ -1,0 +1,14 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{Rw} \PYG{n}{rw}\PYG{p}{;}
+\PYG{n}{rw\PYGZus{}init}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{rw}\PYG{p}{);}
+
+\PYG{n}{rw\PYGZus{}get\PYGZus{}read}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{rw}\PYG{p}{);}
+\PYG{c+cm}{/* Ler à vontade */}
+\PYG{n}{rw\PYGZus{}release\PYGZus{}read}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{rw}\PYG{p}{);}
+
+\PYG{n}{rw\PYGZus{}get\PYGZus{}write}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{rw}\PYG{p}{);}
+\PYG{c+cm}{/* Escrever à vontade */}
+\PYG{n}{rw\PYGZus{}release\PYGZus{}write}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{rw}\PYG{p}{);}
+
+\PYG{n}{rw\PYGZus{}destroy}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{rw}\PYG{p}{);}
+\end{Verbatim}
