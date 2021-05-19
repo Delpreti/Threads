@@ -56,7 +56,7 @@ int check_temperature(float *buff){
 
 void write_buffer(float *buff, float temperature){
     buff[current] = temperature;
-    current = current + 1 % BUFFER_SIZE;
+    current = (current + 1) % BUFFER_SIZE;
 }
 
 // --------- Threads ----------
