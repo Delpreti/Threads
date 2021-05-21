@@ -99,8 +99,32 @@ int main(int argc, char** argv){
     pthread_t tid_sistema[N_THREADS];
 
     int test_num = 1;
-    
-    // Teste 01: Multiplas threads tentando escrever.
+
+    // Teste 01: Multiplas threads tentando realizar leitura.
+    // Requisito: Threads leitoras não devem se bloquear entre si
+    printf("Iniciando teste #%d\n", test_num);
+    int read_array[N_THREADS];
+    for(thread = 0; thread < N_THREADS; thread++){
+        spawn_thread_read(tid_sistema, thread, N_THREADS, &rw_manager, &read_array[thread]);
+    }
+    printf("%d thread(s) created\n", thread);
+
+    for(thread = 0; thread < N_THREADS; thread++){
+        if( pthread_join(tid_sistema[thread], NULL) ){
+            printf("erro ao encerrar a thread no teste #%d\n", test_num);
+        }
+    }
+
+    int test = 0;
+    sum_array(read_array, N_THREADS, test);
+    if(test > 0){
+        printf("Teste %d: falhou\n", test_num);
+    } else {
+        printf("Teste %d: sucesso\n", test_num);
+    }
+    test_num++;
+
+    // Teste 02: Multiplas threads tentando escrever.
     // Requisito: apenas 1 thread pode escrever por vez.
     printf("Iniciando teste #%d\n", test_num);
     int test_array[N_THREADS];
@@ -124,7 +148,7 @@ int main(int argc, char** argv){
     }
     test_num++;
     
-    // Teste 02: Escitora, depois leitora
+    // Teste 03: Escitora, depois leitora
     // Requisito: A leitora deve bloquear se houver uma thread escrevendo
     printf("Iniciando teste #%d\n", test_num);
     int useful = 42;
