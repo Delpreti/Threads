@@ -15,16 +15,15 @@ void rw_destroy(Rw *rw) {
 	pthread_cond_destroy(&rw->write_cond);
 }
 
-int rw_get_read(Rw *rw) {
-	int block_check = STRAIGHT;
+void rw_get_read(Rw *rw, int *block_check) {
 	pthread_mutex_lock(&rw->mutex);
+	*block_check = STRAIGHT;
 	while (rw->writers > 0) {
+		*block_check = BLOCKED;
 		pthread_cond_wait(&rw->read_cond, &rw->mutex);
-		block_check = BLOCKED;
 	}
 	rw->readers++;
 	pthread_mutex_unlock(&rw->mutex);
-	return block_check;
 }
 
 void rw_release_read(Rw *rw) {
@@ -35,16 +34,15 @@ void rw_release_read(Rw *rw) {
 	pthread_mutex_unlock(&rw->mutex);
 }
 
-int rw_get_write(Rw *rw) {
-	int block_check = STRAIGHT;
+void rw_get_write(Rw *rw, int *block_check) {
 	pthread_mutex_lock(&rw->mutex);
+	*block_check = STRAIGHT;
 	while (rw->writers > 0 || rw->readers > 0) {
+		*block_check = BLOCKED;
 		pthread_cond_wait(&rw->write_cond, &rw->mutex);
-		block_check = BLOCKED;
 	}
 	rw->writers++;
 	pthread_mutex_unlock(&rw->mutex);
-	return block_check;
 }
 
 void rw_release_write(Rw *rw) {

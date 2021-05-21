@@ -69,13 +69,15 @@ typedef struct {
     int total_threads;
 } thread_args;
 
+int *nulo;
+
 void* reader_function(void* args_pointer){ // ATUADOR
     thread_args* args = (thread_args*) args_pointer;
 
     // loop principal
     int result;
     while(1){
-        rw_get_read(args->rw_man);
+        rw_get_read(args->rw_man, nulo);
         result = check_temperature(args->buffer);
         rw_release_read(args->rw_man);
         if(result != state){
@@ -93,7 +95,7 @@ void* writer_function(void* args_pointer){ // SENSOR
 
     // loop principal
     while(1){
-        rw_get_write(args->rw_man);
+        rw_get_write(args->rw_man, nulo);
         write_buffer(args->buffer, get_temperature_rand());
         rw_release_write(args->rw_man);
         sleep(1);
@@ -160,6 +162,9 @@ int main(int argc, char** argv){
     pthread_t tid_write[N_THREADS];
     pthread_t tid_read[N_THREADS];
 
+    nulo = (int *) malloc(sizeof(int));
+    check_alloc(nulo, "erro de alocacao");
+
     // ---- Criacao das threads ----
     // -----------------------------
     for(thread = 0; thread < N_THREADS; thread++){
@@ -186,5 +191,6 @@ int main(int argc, char** argv){
     // ----- Encerramento -----
     // ------------------------
     rw_destroy(&rw_manager);
+    free(nulo);
     return 0;
 }

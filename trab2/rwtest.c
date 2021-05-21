@@ -35,7 +35,7 @@ typedef struct {
 void* reader_function(void* args_pointer){ // ATUADOR
     thread_args* args = (thread_args*) args_pointer;
 
-    *(args->block_test) = rw_get_read(args->rw_man);
+    rw_get_read(args->rw_man, args->block_test);
     sleep(3);
     rw_release_read(args->rw_man);
 
@@ -46,7 +46,7 @@ void* reader_function(void* args_pointer){ // ATUADOR
 void* writer_function(void* args_pointer){ // SENSOR
     thread_args* args = (thread_args*) args_pointer;
 
-    *(args->block_test) = rw_get_write(args->rw_man);
+    rw_get_write(args->rw_man, args->block_test);
     sleep(3);
     rw_release_write(args->rw_man);
 
@@ -163,6 +163,37 @@ int main(int argc, char** argv){
     }
 
     if(useful){
+        printf("Teste %d: sucesso\n", test_num);
+    } else {
+        printf("Teste %d: falhou\n", test_num);
+    }
+    test_num++;
+
+    // Teste 04: Prioridade na escrita
+    // Requisito: A escritora deve entrar antes da segunda leitora
+    printf("Iniciando teste #%d\n", test_num);
+    int use1 = 42;
+    spawn_thread_read(tid_sistema, 0, N_THREADS, &rw_manager, &use1);
+    while(use1){} // garantir que a thread pegou a permissao para fazer a leitura
+
+    int use2 = 42;
+    spawn_thread_write(tid_sistema, 1, N_THREADS, &rw_manager, &use2);
+    while(use2 != 1){} // garantir que essa thread bloqueou
+
+    int use3 = 42;
+    spawn_thread_read(tid_sistema, 2, N_THREADS, &rw_manager, &use3);
+
+    if( pthread_join(tid_sistema[0], NULL) ){
+        printf("erro ao encerrar a thread no teste #%d\n", test_num);
+    }
+    if( pthread_join(tid_sistema[1], NULL) ){
+        printf("erro ao encerrar a thread no teste #%d\n", test_num);
+    }
+    if( pthread_join(tid_sistema[2], NULL) ){
+        printf("erro ao encerrar a thread no teste #%d\n", test_num);
+    }
+
+    if(use3){
         printf("Teste %d: sucesso\n", test_num);
     } else {
         printf("Teste %d: falhou\n", test_num);

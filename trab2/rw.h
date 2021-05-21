@@ -11,7 +11,7 @@ typedef struct Rw {
 
 void rw_init(Rw *rw);
 void rw_destroy(Rw *rw);
-int rw_get_read(Rw *rw);
+void rw_get_read(Rw *rw, int *block_check);
 void rw_release_read(Rw *rw);
-int rw_get_write(Rw *rw);
+void rw_get_write(Rw *rw, int *block_check);
 void rw_release_write(Rw *rw);
