@@ -22,6 +22,10 @@ void rw_get_read(Rw *rw, int *block_check) {
 		*block_check = BLOCKED;
 		pthread_cond_wait(&rw->read_cond, &rw->mutex);
 	}
+
+	if (*block_check == BLOCKED)
+		*block_check = UNBLOCKED;
+
 	rw->readers++;
 	pthread_mutex_unlock(&rw->mutex);
 }
@@ -41,6 +45,10 @@ void rw_get_write(Rw *rw, int *block_check) {
 		*block_check = BLOCKED;
 		pthread_cond_wait(&rw->write_cond, &rw->mutex);
 	}
+
+	if (*block_check == BLOCKED)
+		*block_check = UNBLOCKED;
+
 	rw->writers++;
 	pthread_mutex_unlock(&rw->mutex);
 }

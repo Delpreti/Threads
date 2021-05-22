@@ -1,207 +1,138 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <signal.h>
+#include <pthread.h>
 #include "rw.h"
+#include "util.h"
 
-// ----------- utils ----------
-// ----------------------------
+#define NTHREADS 8
+#define NTESTS 4
 
-// macro para verificar resultado da alocacao de memoria
-#define check_alloc(pointer, message){ \
-    if (pointer == NULL) { \
-        printf(message); \
-        exit(-1); \
-    } \
+#define spawn_thread(thread, attr, start_routine, arg) { \
+	if (pthread_create(thread, attr, start_routine, arg)) { \
+        printf("pthread_create() not successfull\n"); \
+		exit(1); \
+	} \
 }
 
-// macro para somar elementos de um array
-#define sum_array(arr, size, soma_var){ \
-    for(int i = 0; i < size; i++){ \
-        soma_var += arr[i]; \
-    } \
-}
+Rw rw;
+pthread_t tid[NTHREADS];
 
-// --------- Threads ----------
-// ----------------------------
-
-typedef struct {
-    int *block_test;
-    Rw *rw_man;
-    int thread_index;
-    int total_threads;
-} thread_args;
-
-void* reader_function(void* args_pointer){ // ATUADOR
-    thread_args* args = (thread_args*) args_pointer;
-
-    rw_get_read(args->rw_man, args->block_test);
+void *reader_thread(void *ret) {
+    rw_get_read(&rw, (int *) ret);
     sleep(3);
-    rw_release_read(args->rw_man);
-
-    free(args_pointer);
+    rw_release_read(&rw);
     pthread_exit(NULL);
 }
 
-void* writer_function(void* args_pointer){ // SENSOR
-    thread_args* args = (thread_args*) args_pointer;
-
-    rw_get_write(args->rw_man, args->block_test);
+void *writer_thread(void *ret) {
+    rw_get_write(&rw, (int *) ret);
     sleep(3);
-    rw_release_write(args->rw_man);
-
-    free(args_pointer);
+    rw_release_write(&rw);
     pthread_exit(NULL);
 }
 
-#define spawn_thread_read(thread_id, index, num_threads, rwm, bt){ \
-    thread_args* args = (thread_args*) malloc( sizeof(thread_args) ); \
-    check_alloc(args, "Erro de alocacao\n"); \
-    \
-    args->block_test = bt; \
-    args->rw_man = rwm; \
-    args->thread_index = index; \
-    args->total_threads = num_threads; \
-    \
-    if( pthread_create(thread_id + index, NULL, reader_function, (void*) args) ){ \
-        printf("pthread_create() not successfull\n"); \
-        exit(-1); \
-    } \
+// Teste 01: Múltiplas threads tentando realizar leitura.
+// Requisito: Threads leitoras não devem se bloquear entre si
+int test1(void) {
+	int block_ret[NTHREADS];
+
+	for (int i = 0; i < NTHREADS; i++)
+		spawn_thread(&tid[i], NULL, reader_thread, &block_ret[i]);
+	for (int i = 0; i < NTHREADS; i++)
+		pthread_join(tid[i], NULL);
+
+	int test = 0;
+    sum_array(block_ret, NTHREADS, test);
+
+	/* Nenhuma das threads deve ter sido bloqueada  */
+	return test == NTHREADS * STRAIGHT;
 }
 
-#define spawn_thread_write(thread_id, index, num_threads, rwm, bt){ \
-    thread_args* args = (thread_args*) malloc( sizeof(thread_args) ); \
-    check_alloc(args, "Erro de alocacao\n"); \
-    \
-    args->block_test = bt; \
-    args->rw_man = rwm; \
-    args->thread_index = index; \
-    args->total_threads = num_threads; \
-    \
-    if( pthread_create(thread_id + index, NULL, writer_function, (void*) args) ){ \
-        printf("pthread_create() not successfull\n"); \
-        exit(-1); \
-    } \
+// Teste 02: Múltiplas threads tentando escrever.
+// Requisito: Apenas 1 thread pode escrever por vez.
+int test2(void) {
+	int block_ret[NTHREADS];
+
+	for (int i = 0; i < NTHREADS; i++)
+		spawn_thread(&tid[i], NULL, writer_thread, &block_ret[i]);
+	for (int i = 0; i < NTHREADS; i++)
+		pthread_join(tid[i], NULL);
+
+	int test = 0;
+    sum_array(block_ret, NTHREADS, test);
+
+	/* Todas as escritoras exceto uma devem ter sido bloqueadas */
+	return test == (NTHREADS - 1) * UNBLOCKED + STRAIGHT;
 }
 
-// ----------------------------
+// Teste 03: Escritora, depois leitora.
+// Requisito: A leitora deve bloquear se houver uma thread escrevendo.
+int test3(void) {
+	int block_ret = BLOCKED;
 
-int main(int argc, char** argv){
+	spawn_thread(&tid[0], NULL, writer_thread, &block_ret);
+	/* Garante que a thread pegou permissão para escrita */
+	while (block_ret != STRAIGHT)
+		;
 
-    // ---- Inicialização ----
-    // -----------------------
-    Rw rw_manager;
-    rw_init(&rw_manager);
+	spawn_thread(&tid[1], NULL, reader_thread, &block_ret);
 
-    const int N_THREADS = 8;
+	pthread_join(tid[0], NULL);
+	pthread_join(tid[1], NULL);
 
-    int thread;
-    pthread_t tid_sistema[N_THREADS];
+	/* A leitora deve ter sido bloqueada */
+	return block_ret == UNBLOCKED;
+}
 
-    int test_num = 1;
+// Teste 04: Prioridade na escrita
+// Requisito: Quando uma escritora está escrevendo e
+// há escritoras leitoras bloqueadas, as escritoras
+// devem ter prioridade.
+int test4(void) {
+	int block_ret[] = {BLOCKED, STRAIGHT, STRAIGHT};
 
-    // Teste 01: Multiplas threads tentando realizar leitura.
-    // Requisito: Threads leitoras não devem se bloquear entre si
-    printf("Iniciando teste #%d\n", test_num);
-    int read_array[N_THREADS];
-    for(thread = 0; thread < N_THREADS; thread++){
-        spawn_thread_read(tid_sistema, thread, N_THREADS, &rw_manager, &read_array[thread]);
-    }
-    printf("%d thread(s) created\n", thread);
+	spawn_thread(&tid[0], NULL, writer_thread, &block_ret[0]);
+	while (block_ret[0] != STRAIGHT)
+		;
 
-    for(thread = 0; thread < N_THREADS; thread++){
-        if( pthread_join(tid_sistema[thread], NULL) ){
-            printf("erro ao encerrar a thread no teste #%d\n", test_num);
-        }
-    }
+	spawn_thread(&tid[1], NULL, reader_thread, &block_ret[1]);
+	spawn_thread(&tid[2], NULL, writer_thread, &block_ret[2]);
+	
+	/* Espera alguma das duas outras threads conseguir permissão */
+	pthread_join(tid[0], NULL);
+	while (block_ret[1] == STRAIGHT && block_ret[2] == STRAIGHT)
+		;
 
-    int test = 0;
-    sum_array(read_array, N_THREADS, test);
-    if(test > 0){
-        printf("Teste %d: falhou\n", test_num);
-    } else {
-        printf("Teste %d: sucesso\n", test_num);
-    }
-    test_num++;
+	/* Salva status após alguma das duas conseguir permissão */
+	int reader_ret = block_ret[1];
+	int writer_ret = block_ret[2];
 
-    // Teste 02: Multiplas threads tentando escrever.
-    // Requisito: apenas 1 thread pode escrever por vez.
-    printf("Iniciando teste #%d\n", test_num);
-    int test_array[N_THREADS];
-    for(thread = 0; thread < N_THREADS; thread++){
-        spawn_thread_write(tid_sistema, thread, N_THREADS, &rw_manager, &test_array[thread]);
-    }
-    printf("%d thread(s) created\n", thread);
+	pthread_join(tid[1], NULL);
+	pthread_join(tid[2], NULL);
 
-    for(thread = 0; thread < N_THREADS; thread++){
-        if( pthread_join(tid_sistema[thread], NULL) ){
-            printf("erro ao encerrar a thread no teste #%d\n", test_num);
-        }
-    }
+	/*
+	 * No momento em que o status foi salvo, a escritora tem que
+	 * ter tido prioridade. Após aguardar o final das threads,
+	 * todas precisam ter sido desbloqueadas.
+	 */
+	return reader_ret == BLOCKED &&
+		   writer_ret == UNBLOCKED &&
+		   block_ret[1] == UNBLOCKED &&
+		   block_ret[2] == UNBLOCKED;
+}
 
-    int test_sum = 0;
-    sum_array(test_array, N_THREADS, test_sum);
-    if(test_sum < 7){
-        printf("Teste %d: falhou\n", test_num);
-    } else {
-        printf("Teste %d: sucesso\n", test_num);
-    }
-    test_num++;
-    
-    // Teste 03: Escitora, depois leitora
-    // Requisito: A leitora deve bloquear se houver uma thread escrevendo
-    printf("Iniciando teste #%d\n", test_num);
-    int useful = 42;
-    spawn_thread_write(tid_sistema, 0, N_THREADS, &rw_manager, &useful);
-    while(useful){}
-    spawn_thread_read(tid_sistema, 1, N_THREADS, &rw_manager, &useful);
-    if( pthread_join(tid_sistema[0], NULL) ){
-        printf("erro ao encerrar a thread no teste #%d\n", test_num);
-    }
-    if( pthread_join(tid_sistema[1], NULL) ){
-        printf("erro ao encerrar a thread no teste #%d\n", test_num);
-    }
+void run_test(int n, int (*test)(void)) {
+	printf("Iniciando teste #%d\n", n);
+	printf("Teste #%d: %s\n", n, (test()) ? "sucesso" : "falhou");
+}
 
-    if(useful){
-        printf("Teste %d: sucesso\n", test_num);
-    } else {
-        printf("Teste %d: falhou\n", test_num);
-    }
-    test_num++;
+int main(void) {
+	int (*tests[])(void) = {test1, test2, test3, test4};
+	rw_init(&rw);
 
-    // Teste 04: Prioridade na escrita
-    // Requisito: A escritora deve entrar antes da segunda leitora
-    printf("Iniciando teste #%d\n", test_num);
-    int use1 = 42;
-    spawn_thread_read(tid_sistema, 0, N_THREADS, &rw_manager, &use1);
-    while(use1){} // garantir que a thread pegou a permissao para fazer a leitura
+	for (int i = 0; i < NTESTS; i++)
+		run_test(i + 1, tests[i]);
 
-    int use2 = 42;
-    spawn_thread_write(tid_sistema, 1, N_THREADS, &rw_manager, &use2);
-    while(use2 != 1){} // garantir que essa thread bloqueou
-
-    int use3 = 42;
-    spawn_thread_read(tid_sistema, 2, N_THREADS, &rw_manager, &use3);
-
-    if( pthread_join(tid_sistema[0], NULL) ){
-        printf("erro ao encerrar a thread no teste #%d\n", test_num);
-    }
-    if( pthread_join(tid_sistema[1], NULL) ){
-        printf("erro ao encerrar a thread no teste #%d\n", test_num);
-    }
-    if( pthread_join(tid_sistema[2], NULL) ){
-        printf("erro ao encerrar a thread no teste #%d\n", test_num);
-    }
-
-    if(use3){
-        printf("Teste %d: sucesso\n", test_num);
-    } else {
-        printf("Teste %d: falhou\n", test_num);
-    }
-    test_num++;
-
-    // ----- Encerramento -----
-    // ------------------------
-    rw_destroy(&rw_manager);
-    return 0;
+	rw_destroy(&rw);
 }
