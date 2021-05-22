@@ -4,6 +4,8 @@ a.out
 result.txt
 threadmine
 sha_test
+main
+test
 *.o
 *.aux
 *.fdb_latexmk
