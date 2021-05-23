@@ -11,6 +11,7 @@
 
 typedef struct Rw {
 	int readers, writers;
+	int writers_blocked;
 	pthread_mutex_t mutex;
 	pthread_cond_t read_cond, write_cond;
 } Rw;

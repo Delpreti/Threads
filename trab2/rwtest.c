@@ -6,7 +6,7 @@
 #include "util.h"
 
 #define NTHREADS 8
-#define NTESTS 4
+#define NTESTS 5
 
 #define spawn_thread(thread, attr, start_routine, arg) { \
 	if (pthread_create(thread, attr, start_routine, arg)) { \
@@ -85,7 +85,7 @@ int test3(void) {
 	return block_ret == UNBLOCKED;
 }
 
-// Teste 04: Prioridade na escrita
+// Teste 04: Prioridade na escrita I
 // Requisito: Quando uma escritora está escrevendo e
 // há escritoras leitoras bloqueadas, as escritoras
 // devem ter prioridade.
@@ -122,13 +122,43 @@ int test4(void) {
 		   block_ret[2] == UNBLOCKED;
 }
 
+// Teste 05: Prioridade na escrita II
+// Requisito: Quando há leitoras lendo e uma escritora
+// é bloqueada, futuras leitoras também precisam ser bloqueadas.
+int test5(void) {
+	int block_ret[] = {BLOCKED, STRAIGHT, STRAIGHT};
+
+	spawn_thread(&tid[0], NULL, reader_thread, &block_ret[0]);
+	while (block_ret[0] != STRAIGHT)
+		;
+
+	spawn_thread(&tid[1], NULL, writer_thread, &block_ret[1]);
+	while (block_ret[1] != BLOCKED)
+		;
+
+	spawn_thread(&tid[2], NULL, reader_thread, &block_ret[2]);
+
+	pthread_join(tid[0], NULL);
+	pthread_join(tid[1], NULL);
+	pthread_join(tid[2], NULL);
+
+	/*
+	 * A primeira leitora não deve ser bloqueada, a escritora
+	 * deve ser bloqueada por causa da leitora e a segunda leitora
+	 * deve ser bloqueada pois há uma escritora bloqueada.
+	 */
+	return block_ret[0] == STRAIGHT &&
+		   block_ret[1] == UNBLOCKED &&
+		   block_ret[2] == UNBLOCKED;
+}
+
 void run_test(int n, int (*test)(void)) {
 	printf("Iniciando teste #%d\n", n);
 	printf("Teste #%d: %s\n", n, (test()) ? "sucesso" : "falhou");
 }
 
 int main(void) {
-	int (*tests[])(void) = {test1, test2, test3, test4};
+	int (*tests[NTESTS])(void) = {test1, test2, test3, test4, test5};
 	rw_init(&rw);
 
 	for (int i = 0; i < NTESTS; i++)
