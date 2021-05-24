@@ -113,11 +113,26 @@ uma área de dados compartilhada;
 de cada vez nessa mesma área;
 \item enquanto o escritor está escrevendo,
 os leitores não podem ler.
+\item Quando uma escritora está escrevendo e
+há ambas threads leitoras e escritoras bloqueadas,
+as escritoras devem ter prioridade.
+\item Quando há leitoras lendo e uma escritora
+é bloqueada, futuras threads leitoras
+também precisam ser bloqueadas.
 \end{enumerate}
 Estes requisitos são avaliados individualmente,
 no arquivo separado \textit{rwtest.c}.
 
 \section{Monitoramento de temperatura}
+
+O programa irá gerar valores aleatórios de temperatura,
+dentro do intervalo de 25 a 40 graus Celsius,
+utilizando a função \texttt{get\_temperature\_rand}.
+Os valores são gerados com uma casa decimal, conforme
+orientação do trabalho. Intuitivamente, entendemos que
+esta função não condiz com uma situação real,
+onde a variação da temperatura ocorreria de forma contínua.
+Todavia, mantivemos este método por ser de fácil imlementação.
 
 A função \texttt{check\_temperature} verifica se haverá
 um caso de sinal vermelho, amarelo ou condição normal,
@@ -127,7 +142,12 @@ no console apenas é atualizado quando ocorre uma mudança.
 \section{Discussão}
 
 Durante a execução, observamos que o Alerta Vermelho
-é raramente acionado.
+é raramente acionado. Um dos motivos identificados
+vem do que discutimos anteriormente: a função que
+gera os valores de temperatura não trata o intervalo
+de valores como contínuo. Isso torna muito mais improvável
+a ocorrência de 5 leituras seguidas com temperatura superior
+a 35 graus.
 
 \section{Referências Bibliográficas}
 

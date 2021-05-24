@@ -87,7 +87,7 @@ int test3(void) {
 
 // Teste 04: Prioridade na escrita I
 // Requisito: Quando uma escritora está escrevendo e
-// há escritoras leitoras bloqueadas, as escritoras
+// há escritoras e leitoras bloqueadas, as escritoras
 // devem ter prioridade.
 int test4(void) {
 	int block_ret[] = {BLOCKED, STRAIGHT, STRAIGHT};
