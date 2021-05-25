@@ -93,12 +93,14 @@ As funções \texttt{rw\_get\_write} e \texttt{rw\_release\_write}
 funcionam de forma análoga.
 
 Quando há alguma thread aguardando permissão para escrever,
-a prioridade para escrita é garantida de duas formas:
+a prioridade para escrita é garantida de três formas:
 \begin{itemize}
 	\item Assim que o último leitor chama \texttt{rw\_release\_read},
 		é garantido que uma thread será liberada para escrita.
 	\item Assim que um escritor chama \texttt{rw\_release\_write},
 		é garantido que uma thread será liberada para escrita.
+	\item Se há um escritor bloqueado, todos os novos leitores
+		também serão bloqueados.
 \end{itemize}
 
 \subsection{Testes}
