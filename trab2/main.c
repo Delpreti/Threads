@@ -6,226 +6,161 @@
 #include "util.h"
 
 #define BUFFER_SIZE 60
+#define WRITE 30
+#define HIGH 35
 
-typedef struct {
-    int id;
-    int degree;
-} heat;
+#define NORMAL 0
+#define YELLOW 1
+#define RED 2
 
-float get_temperature_rand(){
-    float x = rand() % 150;
-    return (x / 10.0) + 25;
-}
+typedef struct Temperature {
+	double temperature;
+	int id;
+} Temperature;
 
-heat new_heat(int id){
-    heat h;
-    h.degree = get_temperature_rand();
-    h.id = id;
-    return h;
-}
+typedef struct ThreadArgs {
+	int id;
+	int *block_ret;
+} ThreadArgs;
 
-int current;
-int grow;
+void check_array(int id);
+double get_temperature_rand(void);
+void add_temp(Temperature temperature);
 
-void change_state(int s){
-    if(s == 0){
-        printf("Condicao Normal\n");
-    } else if(s == 1){
-        printf("Alerta amarelo\n");
-    } else {
-        printf("Alerta vermelho\n");
-    }
-}
+Temperature array[BUFFER_SIZE];
+Rw rw;
+int size = 0;
+int next = 0;
 
-// 0 para ok, 1 para amarelo, 2 para vermelho
-int check_temperature(heat *buff, int t_id){
-    int highs = 0;
-    float fifteen = 0.0;
-    float sum = 0.0;
-    int flag = 0;
-    if(grow >= 60){
-        for(int i = current; i > current - 60; i--){
-            if(buff[i % 60].id == t_id){
-                sum += buff[i % 60].degree;
-                fifteen += 1;
-                if(buff[i % 60].degree > 35.0){
-                    highs++;
-                }
-                if(highs == 5){
-                    if(i == 5){
-                        flag = 2;
-                    } else if(fifteen <= 15){
-                        flag = 1;
-                    }
-                }
-            }
-        }
-    } else {
-        for(int i = current; i > current - grow; i--){
-            if(buff[i % 60].id == t_id){
-                fifteen += 1;
-                if(buff[i % 60].degree > 35.0){
-                    highs++;
-                }
-                if(highs == 5){
-                    if(i == 5){
-                        flag = 2;
-                    } else if(fifteen <= 15){
-                        flag = 1;
-                    }
-                }
-            }
-        }
-    }
-    printf("Sensor %d, Temperatura Média: %.2f\n", t_id, sum / fifteen);
-    return flag;
-}
-
-void write_buffer(heat *buff, int t_id){
-    buff[current] = new_heat(t_id);
-    current = (current + 1) % BUFFER_SIZE;
-    grow++;
-}
-
-// --------- Threads ----------
-// ----------------------------
-
-typedef struct {
-    heat *buffer;
-    Rw *rw_man;
-    int *nulo;
-    int thread_index;
-    int total_threads;
-} thread_args;
-
-void* reader_function(void* args_pointer){ // ATUADOR
-    thread_args* args = (thread_args*) args_pointer;
-
-    // loop principal
-    int result;
-    while(1){
-        printf("%d quer ler\n", args->thread_index);
-        rw_get_read(args->rw_man, args->nulo);
-        printf("%d vai ler\n", args->thread_index);
-        result = check_temperature(args->buffer, args->thread_index);
-        change_state(result);
-        rw_release_read(args->rw_man);
-        printf("%d ja leu\n", args->thread_index);
+void *reader_function(void *args_ptr) {
+	ThreadArgs *args = (ThreadArgs *) args_ptr;
+    while (1) {
+        rw_get_read(&rw, args->block_ret);
+		check_array(args->id);
+        rw_release_read(&rw);
         sleep(2);
     }
 
-    free(args->nulo);
-    free(args_pointer);
-    pthread_exit(NULL);
+	pthread_exit(NULL);
 }
 
-void* writer_function(void* args_pointer){ // SENSOR
-    thread_args* args = (thread_args*) args_pointer;
+void *writer_function(void *args_ptr) {
+	ThreadArgs *args = (ThreadArgs *) args_ptr;
+    while (1) {
+        rw_get_write(&rw, args->block_ret);
 
-    // loop principal
-    while(1){
-        printf("%d quer escrever\n", args->thread_index);
-        rw_get_write(args->rw_man, args->nulo);
-        printf("%d vai escrever\n", args->thread_index);
-        write_buffer(args->buffer, args->thread_index);
-        rw_release_write(args->rw_man);
-        printf("%d ja escreveu\n", args->thread_index);
+		double num = get_temperature_rand();
+		if (num > WRITE) {
+			Temperature temperature = {.temperature = num, .id = args->id};
+			add_temp(temperature);
+		}
+
+        rw_release_write(&rw);
+
         sleep(1);
     }
 
-    free(args->nulo);
-    free(args_pointer);
-    pthread_exit(NULL);
+	pthread_exit(NULL);
 }
 
-#define spawn_thread_read(thread_id, index, num_threads, rwm, b){ \
-    thread_args* args = (thread_args*) malloc( sizeof(thread_args) ); \
-    check_alloc(args, "Erro de alocacao\n"); \
-    \
-    int *nul = (int *) malloc(sizeof(int)); \
-    check_alloc(nul, "erro de alocacao"); \
-    args->nulo = nul; \
-    args->buffer = b; \
-    args->rw_man = rwm; \
-    args->thread_index = index; \
-    args->total_threads = num_threads; \
-    \
-    if( pthread_create(thread_id + index, NULL, reader_function, (void*) args) ){ \
-        printf("pthread_create() not successfull\n"); \
-        exit(-1); \
-    } \
+double get_temperature_rand(void) {
+    double x = rand() % 150;
+    return (x / 10.0) + 25;
 }
 
-#define spawn_thread_write(thread_id, index, num_threads, rwm, b){ \
-    thread_args* args = (thread_args*) malloc( sizeof(thread_args) ); \
-    check_alloc(args, "Erro de alocacao\n"); \
-    \
-    int *nul = (int *) malloc(sizeof(int)); \
-    check_alloc(nul, "erro de alocacao"); \
-    args->nulo = nul; \
-    args->buffer = b; \
-    args->rw_man = rwm; \
-    args->thread_index = index; \
-    args->total_threads = num_threads; \
-    \
-    if( pthread_create(thread_id + index, NULL, writer_function, (void*) args) ){ \
-        printf("pthread_create() not successfull\n"); \
-        exit(-1); \
-    } \
+void add_temp(Temperature temperature) {
+	array[next] = temperature;
+	next = (next + 1) % BUFFER_SIZE;
+	if (size != BUFFER_SIZE)
+		size++;
 }
 
-// ----------------------------
+void check_array(int id) {
+	int count = 0;
+	int high = 0;
+	int ret = NORMAL;
+	double sum = 0;
+	for (int i = 0; i < size; i++) {
+		if (array[i].id != id)
+			continue;
 
-int main(int argc, char** argv){
+		sum += array[i].temperature;
+		count++;
+		if (array[i].temperature > HIGH)
+			high++;
 
-    // ---- Leitura da entrada ----
-    // ----------------------------
-    if(argc < 2){
+		if (count == 5 && high == 5)
+			ret = RED;
+
+		if (ret != RED && count <= 15 && high >= 5)
+			ret = YELLOW;
+	}
+
+	switch (ret) {
+		case NORMAL:
+			printf("Sensor %d: condição normal.\n", id);
+			break;
+		case YELLOW:
+			printf("Sensor %d: alerta amarelo.\n", id);
+			break;
+		case RED:
+			printf("Sensor %d: alerta vermelho.\n", id);
+			break;
+		default:
+			break;
+	}
+
+	if (count != 0)
+		printf("Sensor %d: média %.2f\n", id, sum / count);
+}
+
+int main(int argc, char **argv) {
+
+    srand(time(NULL));
+	rw_init(&rw);
+
+    if(argc < 2) {
         printf("Digite: %s <numero de sensores / escritores>\n", argv[0]);
         return 1;
     }
+
     char *endptr;
-    const int N_THREADS = strtol(argv[1], &endptr, 0); // quantidade de zeros necessarios
+    int N_THREADS = strtol(argv[1], &endptr, 0);
 
-    // ---- Inicialização ----
-    // -----------------------
-    srand(time(NULL));
-    Rw rw_manager;
-    rw_init(&rw_manager);
+    pthread_t *tid_write;
+    pthread_t *tid_read;
+	ThreadArgs *args_write;
+	ThreadArgs *args_read;
+	int *block_ret_write;
+	int *block_ret_read;
 
-    heat buffer[BUFFER_SIZE];
-    current = 0;
-    grow = 0;
+	tid_write = malloc(N_THREADS * sizeof(pthread_t));
+	tid_read = malloc(N_THREADS * sizeof(pthread_t));
+	args_write = malloc(N_THREADS * sizeof(ThreadArgs));
+	args_read = malloc(N_THREADS * sizeof(ThreadArgs));
+	block_ret_write = malloc(N_THREADS * sizeof(int));
+	block_ret_read = malloc(N_THREADS * sizeof(int));
 
-    int thread;
-    pthread_t tid_write[N_THREADS];
-    pthread_t tid_read[N_THREADS];
+	for (int i = 0; i < N_THREADS; i++) {
+		args_write[i].id = i;
+		args_write[i].block_ret = &block_ret_write[i];
+		pthread_create(&tid_write[i], NULL, writer_function, &args_write[i]);
 
-    // ---- Criacao das threads ----
-    // -----------------------------
-    for(thread = 0; thread < N_THREADS; thread++){
-        spawn_thread_write(tid_write, thread, N_THREADS, &rw_manager, buffer);
-        spawn_thread_read(tid_read, thread, N_THREADS, &rw_manager, buffer);
-    }
-    printf("%d thread(s) created\n", thread);
+		args_read[i].id = i;
+		args_read[i].block_ret = &block_ret_read[i];
+		pthread_create(&tid_read[i], NULL, reader_function, &args_read[i]);
+	}
 
-    // ---- Aguardo das threads ----
-    // -----------------------------
-    for(thread = 0; thread < N_THREADS; thread++){
-        if( pthread_join(tid_write[thread], NULL) ){
-            printf("pthread_join() not successfull\n");
-            exit(-1);
-        }
-        if( pthread_join(tid_read[thread], NULL) ){
-            printf("pthread_join() not successfull\n");
-            exit(-1);
-        }
-    }
+	for (int i = 0; i < N_THREADS; i++) {
+		pthread_join(tid_write[i], NULL);
+		pthread_join(tid_read[i], NULL);
+	}
 
-    //printf("%.1f\n", get_temperature_rand());
-
-    // ----- Encerramento -----
-    // ------------------------
-    rw_destroy(&rw_manager);
-    return 0;
+	free(tid_write);
+	free(args_write);
+	free(block_ret_write);
+	free(tid_read);
+	free(args_read);
+	free(block_ret_read);
+	rw_destroy(&rw);
 }
