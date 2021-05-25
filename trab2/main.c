@@ -3,30 +3,31 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "rw.h"
+#include "util.h"
 
 #define BUFFER_SIZE 60
 
-// ----------- utils ----------
-// ----------------------------
-
-// macro para verificar resultado da alocacao de memoria
-#define check_alloc(pointer, message){ \
-    if (pointer == NULL) { \
-        printf(message); \
-        exit(-1); \
-    } \
-}
+typedef struct {
+    int id;
+    int degree;
+} heat;
 
 float get_temperature_rand(){
     float x = rand() % 150;
     return (x / 10.0) + 25;
 }
 
+heat new_heat(int id){
+    heat h;
+    h.degree = get_temperature_rand();
+    h.id = id;
+    return h;
+}
+
 int current;
-int state;
+int grow;
 
 void change_state(int s){
-    state = s;
     if(s == 0){
         printf("Condicao Normal\n");
     } else if(s == 1){
@@ -37,39 +38,65 @@ void change_state(int s){
 }
 
 // 0 para ok, 1 para amarelo, 2 para vermelho
-int check_temperature(float *buff){
+int check_temperature(heat *buff, int t_id){
     int highs = 0;
-    for(int i = current; i > current - 15; i--){
-        if(buff[i % 60] > 35.0){
-            highs++;
+    float fifteen = 0.0;
+    float sum = 0.0;
+    int flag = 0;
+    if(grow >= 60){
+        for(int i = current; i > current - 60; i--){
+            if(buff[i % 60].id == t_id){
+                sum += buff[i % 60].degree;
+                fifteen += 1;
+                if(buff[i % 60].degree > 35.0){
+                    highs++;
+                }
+                if(highs == 5){
+                    if(i == 5){
+                        flag = 2;
+                    } else if(fifteen <= 15){
+                        flag = 1;
+                    }
+                }
+            }
         }
-        if(highs == 5){
-            if(i == 5){
-                return 2;
-            } else {
-                return 1;
+    } else {
+        for(int i = current; i > current - grow; i--){
+            if(buff[i % 60].id == t_id){
+                fifteen += 1;
+                if(buff[i % 60].degree > 35.0){
+                    highs++;
+                }
+                if(highs == 5){
+                    if(i == 5){
+                        flag = 2;
+                    } else if(fifteen <= 15){
+                        flag = 1;
+                    }
+                }
             }
         }
     }
-    return 0;
+    printf("Sensor %d, Temperatura Média: %.2f\n", t_id, sum / fifteen);
+    return flag;
 }
 
-void write_buffer(float *buff, float temperature){
-    buff[current] = temperature;
+void write_buffer(heat *buff, int t_id){
+    buff[current] = new_heat(t_id);
     current = (current + 1) % BUFFER_SIZE;
+    grow++;
 }
 
 // --------- Threads ----------
 // ----------------------------
 
 typedef struct {
-    float *buffer;
+    heat *buffer;
     Rw *rw_man;
+    int *nulo;
     int thread_index;
     int total_threads;
 } thread_args;
-
-int *nulo;
 
 void* reader_function(void* args_pointer){ // ATUADOR
     thread_args* args = (thread_args*) args_pointer;
@@ -77,15 +104,17 @@ void* reader_function(void* args_pointer){ // ATUADOR
     // loop principal
     int result;
     while(1){
-        rw_get_read(args->rw_man, nulo);
-        result = check_temperature(args->buffer);
+        printf("%d quer ler\n", args->thread_index);
+        rw_get_read(args->rw_man, args->nulo);
+        printf("%d vai ler\n", args->thread_index);
+        result = check_temperature(args->buffer, args->thread_index);
+        change_state(result);
         rw_release_read(args->rw_man);
-        if(result != state){
-            change_state(result);
-        }
+        printf("%d ja leu\n", args->thread_index);
         sleep(2);
     }
 
+    free(args->nulo);
     free(args_pointer);
     pthread_exit(NULL);
 }
@@ -95,12 +124,16 @@ void* writer_function(void* args_pointer){ // SENSOR
 
     // loop principal
     while(1){
-        rw_get_write(args->rw_man, nulo);
-        write_buffer(args->buffer, get_temperature_rand());
+        printf("%d quer escrever\n", args->thread_index);
+        rw_get_write(args->rw_man, args->nulo);
+        printf("%d vai escrever\n", args->thread_index);
+        write_buffer(args->buffer, args->thread_index);
         rw_release_write(args->rw_man);
+        printf("%d ja escreveu\n", args->thread_index);
         sleep(1);
     }
 
+    free(args->nulo);
     free(args_pointer);
     pthread_exit(NULL);
 }
@@ -109,6 +142,9 @@ void* writer_function(void* args_pointer){ // SENSOR
     thread_args* args = (thread_args*) malloc( sizeof(thread_args) ); \
     check_alloc(args, "Erro de alocacao\n"); \
     \
+    int *nul = (int *) malloc(sizeof(int)); \
+    check_alloc(nul, "erro de alocacao"); \
+    args->nulo = nul; \
     args->buffer = b; \
     args->rw_man = rwm; \
     args->thread_index = index; \
@@ -124,6 +160,9 @@ void* writer_function(void* args_pointer){ // SENSOR
     thread_args* args = (thread_args*) malloc( sizeof(thread_args) ); \
     check_alloc(args, "Erro de alocacao\n"); \
     \
+    int *nul = (int *) malloc(sizeof(int)); \
+    check_alloc(nul, "erro de alocacao"); \
+    args->nulo = nul; \
     args->buffer = b; \
     args->rw_man = rwm; \
     args->thread_index = index; \
@@ -154,16 +193,13 @@ int main(int argc, char** argv){
     Rw rw_manager;
     rw_init(&rw_manager);
 
-    float buffer[BUFFER_SIZE];
+    heat buffer[BUFFER_SIZE];
     current = 0;
-    state = 0;
+    grow = 0;
 
     int thread;
     pthread_t tid_write[N_THREADS];
     pthread_t tid_read[N_THREADS];
-
-    nulo = (int *) malloc(sizeof(int));
-    check_alloc(nulo, "erro de alocacao");
 
     // ---- Criacao das threads ----
     // -----------------------------
@@ -191,6 +227,5 @@ int main(int argc, char** argv){
     // ----- Encerramento -----
     // ------------------------
     rw_destroy(&rw_manager);
-    free(nulo);
     return 0;
 }
