@@ -34,20 +34,20 @@ int next = 0;
 
 void *reader_function(void *args_ptr) {
 	ThreadArgs *args = (ThreadArgs *) args_ptr;
-    while (1) {
-        rw_get_read(&rw, args->block_ret);
+	while (1) {
+		rw_get_read(&rw, args->block_ret);
 		check_array(args->id);
-        rw_release_read(&rw);
-        sleep(2);
-    }
+		rw_release_read(&rw);
+		sleep(2);
+	}
 
 	pthread_exit(NULL);
 }
 
 void *writer_function(void *args_ptr) {
 	ThreadArgs *args = (ThreadArgs *) args_ptr;
-    while (1) {
-        rw_get_write(&rw, args->block_ret);
+	while (1) {
+		rw_get_write(&rw, args->block_ret);
 
 		double num = get_temperature_rand();
 		if (num > WRITE) {
@@ -55,17 +55,17 @@ void *writer_function(void *args_ptr) {
 			add_temp(temperature);
 		}
 
-        rw_release_write(&rw);
+		rw_release_write(&rw);
 
-        sleep(1);
-    }
+		sleep(1);
+	}
 
 	pthread_exit(NULL);
 }
 
 double get_temperature_rand(void) {
-    double x = rand() % 150;
-    return (x / 10.0) + 25;
+	double x = rand() % 150;
+	return (x / 10.0) + 25;
 }
 
 void add_temp(Temperature temperature) {
@@ -116,19 +116,19 @@ void check_array(int id) {
 
 int main(int argc, char **argv) {
 
-    srand(time(NULL));
+	srand(time(NULL));
 	rw_init(&rw);
 
-    if(argc < 2) {
-        printf("Digite: %s <numero de sensores / escritores>\n", argv[0]);
-        return 1;
-    }
+	if(argc < 2) {
+		printf("Digite: %s <numero de sensores / escritores>\n", argv[0]);
+		return 1;
+	}
 
-    char *endptr;
-    int N_THREADS = strtol(argv[1], &endptr, 0);
+	char *endptr;
+	int N_THREADS = strtol(argv[1], &endptr, 0);
 
-    pthread_t *tid_write;
-    pthread_t *tid_read;
+	pthread_t *tid_write;
+	pthread_t *tid_read;
 	ThreadArgs *args_write;
 	ThreadArgs *args_read;
 	int *block_ret_write;
