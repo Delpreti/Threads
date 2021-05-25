@@ -126,6 +126,10 @@ int main(int argc, char **argv) {
 
 	char *endptr;
 	int N_THREADS = strtol(argv[1], &endptr, 0);
+	if (*argv[1] == '\0' || *endptr != '\0' || N_THREADS <= 0) {
+		printf("O número de threads deve ser um inteiro maior que 0.\n");
+		return 1;
+	}
 
 	pthread_t *tid_write;
 	pthread_t *tid_read;
