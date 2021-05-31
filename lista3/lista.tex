@@ -1,0 +1,134 @@
+\documentclass[12pt]{article}
+
+\usepackage[brazilian]{babel}
+\usepackage{indentfirst}
+% \usepackage{amsmath}
+\usepackage{minted}
+
+\title{Lista III de Computação Concorrente:}
+\author{Gabriel da Fonseca Ottoboni Pinho - DRE 119043838\\
+	Rodrigo Delpreti de Siqueira - DRE 119022353}
+\date{01/06/2021}
+
+\begin{document}
+	\maketitle
+	\newpage
+	
+	\section{Questão 1}
+	O carro vindo do Norte poderá iniciar a travessia,
+	pois a ponte está livre.
+	
+	\newpage
+	\begin{minted}{c}
+		Rw rw;
+		rw_init(&rw);
+		
+		rw_get_read(&rw);
+		/* Ler à vontade */
+		rw_release_read(&rw);
+		
+		rw_get_write(&rw);
+		/* Escrever à vontade */
+		rw_release_write(&rw);
+		
+		rw_destroy(&rw);
+	\end{minted}
+	
+	Como mostrado no exemplo acima,
+	a função \texttt{rw\_init}
+	inicializa os campos do \textit{struct},
+	enquanto que \texttt{rw\_destroy} faz o oposto.
+	Antes de ler,
+	a thread deve chamar \texttt{rw\_get\_read},
+	que retornará imediatamente
+	se nenhuma outra estiver escrevendo.
+	Caso contrário, a thread ficará bloqueada
+	até que nenhuma outra thread esteja escrevendo.
+	Ao acabar de ler,
+	a thread deve chamar \texttt{rw\_release\_read}.
+	As funções \texttt{rw\_get\_write} e \texttt{rw\_release\_write}
+	funcionam de forma análoga.
+	
+	Quando há alguma thread aguardando permissão para escrever,
+	a prioridade para escrita é garantida de três formas:
+	\begin{itemize}
+		\item Assim que o último leitor chama \texttt{rw\_release\_read},
+		é garantido que uma thread será liberada para escrita.
+		\item Assim que um escritor chama \texttt{rw\_release\_write},
+		é garantido que uma thread será liberada para escrita.
+		\item Se há um escritor bloqueado, todos os novos leitores
+		também serão bloqueados.
+	\end{itemize}
+	
+	\newpage
+	\subsection{Testes}
+	
+	Os testes realizados sobre a implementação que criamos
+	para o padrão de leitores/escritores visam atender
+	os seguintes requisitos:
+	\begin{enumerate}
+		\item mais de um leitor pode ler ao mesmo tempo
+		uma área de dados compartilhada;
+		\item apenas um escritor pode escrever
+		de cada vez nessa mesma área;
+		\item enquanto o escritor está escrevendo,
+		os leitores não podem ler.
+		\item Quando uma escritora está escrevendo e
+		há ambas threads leitoras e escritoras bloqueadas,
+		as escritoras devem ter prioridade.
+		\item Quando há leitoras lendo e uma escritora
+		é bloqueada, futuras threads leitoras
+		também precisam ser bloqueadas.
+	\end{enumerate}
+	Estes requisitos são avaliados individualmente,
+	no arquivo separado \textit{rwtest.c}.
+	
+	\section{Monitoramento de temperatura}
+	
+	A solução utiliza uma struct para guardar os valores
+	respectivos de temperatura para cada thread. Estas
+	recebem o próprio id e um ponteiro que a solução
+	de leitores e escritores exige. Esse ponteiro é
+	utilizado apenas nos testes, não faz parte da lógica
+	do programa principal.
+	
+	O programa irá gerar valores aleatórios de temperatura,
+	dentro do intervalo de 25 a 40 graus Celsius,
+	utilizando a função \texttt{get\_temperature\_rand}.
+	Os valores são gerados com uma casa decimal, conforme
+	orientação do trabalho. Intuitivamente, entendemos que
+	esta função não condiz com uma situação real,
+	onde a variação da temperatura ocorreria de forma contínua.
+	Todavia, mantivemos este método por ser de fácil imlementação.
+	
+	A função \texttt{check\_array} é executada pela thread leitora
+	(atuador). Ela verifica se haverá
+	um caso de sinal vermelho, amarelo ou condição normal,
+	com base nos requisitos do trabalho. Além disso, ela
+	exibe a média 
+	
+	A função \texttt{add\_temp} é executada pela thread escritora
+	(sensor). Ela insere o valor medido no espaço
+	de memória compartilhado.
+	
+	É permitido ao usuário interagir com a aplicação
+	definindo o número de threads. Após mandar rodar,
+	a aplicação executará por tempo indefinido, até ser encerrada
+	por Ctrl+C.
+	
+	\newpage
+	\section{Discussão}
+	
+	Durante a execução, observamos que o Alerta Vermelho
+	é raramente acionado. Um dos motivos identificados
+	vem do que discutimos anteriormente: a função que
+	gera os valores de temperatura não trata o intervalo
+	de valores como contínuo. Isso torna muito mais improvável
+	a ocorrência de 5 leituras seguidas com temperatura superior
+	a 35 graus.
+	
+	Além disso, o alerta amarelo também demora algumas
+	execuções para aparecer, pois no início não há escritas
+	o suficiente para que tais condições sejam atendidas.
+	
+\end{document}

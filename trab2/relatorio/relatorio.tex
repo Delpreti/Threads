@@ -103,6 +103,7 @@ a prioridade para escrita é garantida de três formas:
 		também serão bloqueados.
 \end{itemize}
 
+\newpage
 \subsection{Testes}
 
 Os testes realizados sobre a implementação que criamos
@@ -127,6 +128,13 @@ no arquivo separado \textit{rwtest.c}.
 
 \section{Monitoramento de temperatura}
 
+A solução utiliza uma struct para guardar os valores
+respectivos de temperatura para cada thread. Estas
+recebem o próprio id e um ponteiro que a solução
+de leitores e escritores exige. Esse ponteiro é
+utilizado apenas nos testes, não faz parte da lógica
+do programa principal.
+
 O programa irá gerar valores aleatórios de temperatura,
 dentro do intervalo de 25 a 40 graus Celsius,
 utilizando a função \texttt{get\_temperature\_rand}.
@@ -136,11 +144,22 @@ esta função não condiz com uma situação real,
 onde a variação da temperatura ocorreria de forma contínua.
 Todavia, mantivemos este método por ser de fácil imlementação.
 
-A função \texttt{check\_temperature} verifica se haverá
+A função \texttt{check\_array} é executada pela thread leitora
+(atuador). Ela verifica se haverá
 um caso de sinal vermelho, amarelo ou condição normal,
-com base nos requisitos do trabalho. O estado exibido
-no console apenas é atualizado quando ocorre uma mudança.
+com base nos requisitos do trabalho. Além disso, ela
+exibe a média 
 
+A função \texttt{add\_temp} é executada pela thread escritora
+(sensor). Ela insere o valor medido no espaço
+de memória compartilhado.
+
+É permitido ao usuário interagir com a aplicação
+definindo o número de threads. Após mandar rodar,
+a aplicação executará por tempo indefinido, até ser encerrada
+por Ctrl+C.
+
+\newpage
 \section{Discussão}
 
 Durante a execução, observamos que o Alerta Vermelho
@@ -151,6 +170,8 @@ de valores como contínuo. Isso torna muito mais improvável
 a ocorrência de 5 leituras seguidas com temperatura superior
 a 35 graus.
 
-\section{Referências Bibliográficas}
+Além disso, o alerta amarelo também demora algumas
+execuções para aparecer, pois no início não há escritas
+o suficiente para que tais condições sejam atendidas.
 
 \end{document}
