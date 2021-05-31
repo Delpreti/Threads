@@ -20,9 +20,45 @@
 \maketitle
 
 \section{}
-O carro vindo do Norte poderá iniciar a travessia,
-pois a ponte está livre.
-	
+\begin{enumerate}
+	\item
+		O carro vindo do Norte poderá iniciar a travessia,
+		pois a ponte está livre
+		(\texttt{n\_sul = 0}).
+	\item
+		Eles seguem em frente,
+		pois a ponte está livre
+		(\texttt{n\_sul = 0}) e
+		a mutex \texttt{e}
+		foi liberada antes da travessia.
+	\item
+		O carro do sul fica retido
+		no \texttt{espera},
+		pois \texttt{n\_norte > 0}.
+	\item
+		Os carros do sul ficam retidos
+		no \texttt{espera},
+		pois \texttt{n\_norte > 0}.
+	\item
+		Quando o último carro do norte
+		atravessar a ponte,
+		teremos \texttt{n\_norte = 0} e
+		\texttt{libera} será chamada,
+		permitindo que os carros do sul continuem.
+	\item
+		Sim,
+		as variáveis \texttt{n\_sul} e \texttt{n\_norte}
+		são protegidas pelo semáforo \texttt{e} e
+		a variável \texttt{cont} é protegida por \texttt{em}.
+	\item
+		Sim,
+		caso a chegada de carros
+		em uma direção seja
+		maior que o tempo da travessia,
+		a direção oposta
+		nunca terá a oportunidade de atravessar.
+\end{enumerate}
+
 \newpage
 \section{}
 O erro ocorre quando o
