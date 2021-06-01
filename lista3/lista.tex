@@ -109,4 +109,62 @@ void *cons(void *args) {
 	}
 }
 \end{minted}
+
+\section{}
+\begin{enumerate}
+	\item
+		Todos os semáforos devem
+		ser iniciados com o valor 1.
+		Como \texttt{em\_e} e \texttt{em\_l} fazem
+		o papel de garantir
+		a exclusão mútua das
+		variáveis \texttt{e} e \texttt{l},
+		eles devem começar com 1.
+		\texttt{escrita} e \texttt{leitura}
+		bloqueiam as threads
+		a fim de garantir os requisitos
+		do padrão leitores e escritores.
+		Para isso,
+		\texttt{sem\_wait(\&escrita)} bloqueia 
+		novos escritores e
+		o semáforo precisa começar com 1.
+	\item
+		Ele consegue ler,
+		pois \texttt{leitura} e \texttt{escrita}
+		terão valor 1,
+		permitindo que ele
+		não seja bloqueado.
+	\item
+		Ele consegue ler,
+		pois o leitor anterior
+		terá setado \texttt{leitura}
+		de volta para 1
+		antes de começar a ler,
+		permitindo a concorrência.
+	\item
+		Ele fica retido,
+		pois o primeiro leitor
+		setou \texttt{escrita} para 0
+		antes de começar a ler.
+		O valor só retorna para 1
+		após o último leitor
+		terminar sua tarefa.
+	\item
+		Ele fica retido,
+		pois o escritor
+		setou \texttt{leitura} para 0
+		antes de se bloquear,
+		garantindo a prioridade para escrita.
+	\item
+		O último leitor a terminar
+		vai setar \texttt{escrita} para 1,
+		permitindo que o escritor trabalhe.
+	\item
+		Nas linhas 3 e 5 da função dos leitores,
+		não é necessário utilizar
+		o semáforo \texttt{em\_l},
+		pois \texttt{leitura} já
+		garante a exclusão mútua.
+\end{enumerate}
+
 \end{document}
