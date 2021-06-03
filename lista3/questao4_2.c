@@ -117,36 +117,37 @@ int main(int argc, char *argv[]) {
 
     // ------- Inicializacao -------
     // -----------------------------
-    int i;
     srand(time(NULL));
 
     pthread_t produtoras[P];
     pthread_t consumidoras[C];
+	int consumidoras_id[C];
 
     pthread_mutex_init(&mutex_content, NULL);
 
-    for(i = 0; i < C; i++){
+    for(int i = 0; i < C; i++){
 	    sem_init(&sem[i], 0, 0);
 	}
     sem_init(&mutex, 0, 1);
     sem_init(&empty_slot, 0, N);
 
     /* Cria as threads*/
-    for(i = 0; i < P; i++){
+    for(int i = 0; i < P; i++){
         pthread_create(&produtoras[i], NULL, prod, NULL);
     }
-    for(i = 0; i < C; i++){
-        pthread_create(&consumidoras[i], NULL, cons, (void*) &i);
+    for(int i = 0; i < C; i++){
+		consumidoras_id[i] = i;
+        pthread_create(&consumidoras[i], NULL, cons, &consumidoras_id[i]);
     }
 
     /* Espera um input (unico caractere) do usuario para encerrar */
     char input;
     scanf("%c", &input);
 
-    for(i = 0; i < P; i++){
+    for(int i = 0; i < P; i++){
         pthread_cancel(produtoras[i]);
     }
-    for(i = 0; i < C; i++){
+    for(int i = 0; i < C; i++){
         pthread_cancel(consumidoras[i]);
     }
 
